@@ -269,3 +269,52 @@ class LeftInfoFrame(Tk.Frame):
 		self.label_info3.grid(column = 0, row = 4,sticky = 'w')
 
 
+class ForceFrame(Tk.Frame):
+	"""
+	"""
+	def __init__(self, parent, text_var, force_status_var):
+		self.force_status_var = force_status_var
+		self.status_button_frame = Tk.Frame(parent, bg = 'red')
+		self.label_force = Tk.Label(self.status_button_frame, text = "FORCE ACTIONS",bg = 'red')
+
+		self.button_none = Tk.Button(self.status_button_frame,text=u"None",command = lambda x=0: self.force_status_callback(x, self.force_status_var))
+		self.button_deploy = Tk.Button(self.status_button_frame,text=u"Deploy",command = lambda x=1: self.force_status_callback(x, self.force_status_var))
+		self.button_land = Tk.Button(self.status_button_frame,text=u"Land",command = lambda x=2: self.force_status_callback(x, self.force_status_var))
+		self.label_force_status = Tk.Label(self.status_button_frame, textvariable = text_var.force_status ,pady=12, bg = 'red')
+		self.button_act = Tk.Button(self.status_button_frame, text = "Execute",command = self.execute_button_callback)
+
+		self.pack_frame()
+
+	def pack_frame(self):
+		self.status_button_frame.pack(side = "top", expand = 1, fill = 'both')
+		self.label_force.pack(side = 'top', fill = 'both')
+		self.button_none.pack(side = 'top')
+		self.button_deploy.pack(side = 'top')
+		self.button_land.pack(side = 'top')
+		self.label_force_status.pack(side = 'top',fill = 'x')
+		self.button_act.pack(side = 'top')
+
+# TODO status and force_status variables 
+	def force_status_callback(self, status, force_status_var):
+		if status == 1:
+			force_status.set("Deploy Selected")
+			force_status_var = 1
+		elif status == 2:
+			force_status.set("Land Selected")
+			force_status_var = 2
+		else:
+			force_status.set("None Selected")
+			force_status_var = 0
+			
+# TODO set_connected variable 
+	def execute_button_callback(self, ser_connected):
+		try:
+			if ser_connected == 1:
+				if force_status_var == 1 or force_status_var == 2:
+					ser.write('f %d\n' % force_status_var)
+					print 'force command sent with %d' % force_status_var
+				else:
+					print 'Nothing was executed'
+		except Exception as e:
+			print "Error: Could not write to serial"
+	    		root.status.set("Error: Could not write to serial. %s" % e)
