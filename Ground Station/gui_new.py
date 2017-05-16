@@ -40,6 +40,7 @@ class Cansat(object):
 	""" Cansat class to encapsulate shared variables and functions 
 	"""
 	def __init__(self, ):
+		self.altitude = [0.0]
 		self.pressure = [0.0] 
 		self.pitot = [0.0]
 		self.temp_outside = [0.0]
@@ -69,26 +70,155 @@ class Payload(Cansat):
 	def __init__(self, ):
 		super().__init__(self, )
 
+
+class MainGUI(Tk.Tk):
+	def __init__(self,parent):
+		Tk.Tk.__init__(self,parent)
+		self.parent = parent
+		self.geometry("1200x1000+ 100+50")
+		self.config(menu=MenuBar(self))
+
 		
 class MenuBar(Tk.Menu):
 	"""
 	"""
 	def __init__(self, parent):
 		super().__init__(self, parent)
+		self.parent = parent 
+		self.initialize()
+
+	def initialize(self):
+		# File menu 
+	    file_menu = Tk.Menu(self, tearoff=0)
+		file_menu.add_command(label="Save", command=self.save_data)
+		file_menu.add_separator()
+		file_menu.add_command(label="Start", command=self.start_operation)
+		file_menu.add_command(label="Pause", comamnd=self.pause_operation)
+		file_menu.add_command(label="Stop", command=self.stop_operation)
+		file_menu.add_separator()		
+		file_menu.add_command(label="Exit", underline=1, command=self.quit)
+		self.add_cascade(label="File", underline=0, menu=file_menu)
+
+		# Connection menu 
+		port_menu = Tk.Menu(self, tearoff=0)
+		found_port = False 
+		for port in check_output(["ls", "/dev"]).split("\n"):
+			if port.find("USB") != -1:
+				found_port = True
+				usb_port = str(port)
+				print(usb_port)
+				port_menu.add_command(label=port, command=lambda usb_port=usb_port: self.open_ser(usb_port))
+
+		port_menu.add_command(label="Disconnect", command=self.disconnect)				
+
+		if not found_port:
+			port_menu.add_command(label="No COM Device Found")
+
+		self.add_cascade(label="Connection", underline=0, menu=port_menu)
+
+		# Help menu 
+		help_menu = Tk.Menu(self, tearoff=0)
+		help_menu.add_command(label="About", command=self.info)
+		self.add_cascade(label="Help", menu=help_menu)
+
+	def save_data(self):
+		pass 
+
+	def start_operation(self):
+		pass 
+
+	def pause_operation(self):
+		pass 
+
+	def stop_operation(self):
+		pass 
+
+	def quit(self):
+		sys.exit(0)
+
+	def open_ser(self, usb_port):
+		global ser, ser_connected
+		address = "/dev/" + usb_port
+		try:
+			ser = Serial(address, baud_rate, timeout=0, writeTimeout=0)
+			# TODO what is status ? 
+			status.set("Connected to %s" % usb_port)
+			ser_connected = True 
+			print("Connected to " + usb_port)
+			flight_status.set("Flight Status: Ready")
+		except Exception as e:
+			print("Error:connection cannot be established")
+			root.status.set("Error: connection cannot be established. %s" % e)
+
+	def disconnect(self, usb_port):
+		global ser, ser_connected
+		ser.close()
+		ser_connected = False 
+		print("Ended connection")
+		flight_status.set("Flight Status: Standby")
 
 
 class StatusBar(Tk.Frame):
 	"""
 	"""
-	def __init__(self, ):
-		pass
+	def __init__(self, parent):
+		super().__init__(self, parent)
+		self.label = Tk.Label(self, relief='sunken', anchor='w')
+		self.label.pack(fill='x')
+		self.set("CANSAT-2017 with RSX")
+
+	def set(self, format, *args):
+		self.label.config(text=format % args)
+		self.label.update_idletasks()
+
+	def clear(self):
+		self.label.set("")
 
 
 class Chart(object):
 	""" Chart class for data plots 
 	"""
-	def __init__(self, ):
+	def __init__(self, containter, payload):
+		self.container = container 
+		self.payload = payload 
 
+	def plot_altitude():
+	    global fig_altitude, dataPlot_altitude, a_altitude
+
+	    fig_altitude = Figure(figsize=(4, 4), dpi = (frame.winfo_width() - 50) / 16)
+	    dataPlot_altitude = FigureCanvasTkAgg(fig_altitude, master = chart1_frame)
+	    a_altitude = fig_altitude.add_subplot(111)
+
+	    dataPlot_altitude.show()
+	    dataPlot_altitude.get_tk_widget().pack()
+
+	    def plot_cts(target):
+	        global a_altitude
+
+	        if target == "container":
+		        x_axis1 = range(0, len(self.container.altitude))
+		        x_axis2 = range(0, len(self.container.gps_alt))
+
+		        a_altitude.clear()
+		        a_altitude.plot(x_axis1, self.container.altitude, "r", label = "BMP180")
+				a_altitude.plot(x_axis2, self.container.gps_alt, "b", label = "GPS")
+			elif target == "payload":
+				x_axis1 = range(0, len(self.payload.altitude))
+		        x_axis2 = range(0, len(self.payload.gps_alt))
+
+		        a_altitude.clear()
+		        a_altitude.plot(x_axis1, self.payload.altitude, "r", label = "BMP180")
+				a_altitude.plot(x_axis2, self.payload.gps_alt, "b", label = "GPS")
+	        
+	        a_altitude.set_title("Altitude (m)")
+			legend = a_altitude.legend(loc='upper left', shadow=True)       
+
+	        dataPlot_altitude.show()
+	        dataPlot_altitude.get_tk_widget().pack()
+
+	        root.after(1000, plot_cts)
+
+	    plot_cts()
 
 	def plot_chart(self, type):
 		global fig_temp, dataPlot_temp, a_temp
@@ -200,9 +330,7 @@ def update_status():
 	else:
 		flight_status.set("Flight Status: Unknown")
 	root.after(200, update_flight_status)
-
-def create_gui():
-	pass
+	
 
 def create_label():
 	pass
@@ -217,7 +345,7 @@ if __name__ == "__main__":
 	f.close()
 
 	# initialize the main gui
-	root = Tk.Tk() # create_gui()
+	root = MainGUI(None)
 	root.title('CANSAT - 2017	Team: ' + str(TEAM_NUM))
 
 	# Text Variables  
