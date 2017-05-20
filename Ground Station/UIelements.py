@@ -112,15 +112,35 @@ class StatusBar(Tk.Frame):
 class Chart(object):
 	""" Chart class for data plots 
 	"""
-	def __init__(self, containter, payload):
+	def __init__(self, parent, containter, payload):
 		self.container = container 
 		self.payload = payload 
+
+		self.frame = Tk.Frame(parent)
+		self.chart1_frame = Tk.Frame(self.frame)
+		self.chart2_frame = Tk.Frame(self.frame)
+		self.chart3_frame = Tk.Frame(self.frame)
+		self.chart4_frame = Tk.Frame(self.frame)
+
+	def pack_frame(self):
+		self.frame.pack(side='top', expand = 1, fill='x')
+		self.frame.bind("<Key>", self.key)
+		self.frame.focus_set()
+
+		self.chart1_frame.pack(side = "left", expand = 1, fill = 'both')
+		self.chart2_frame.pack(side = "left", expand = 1, fill = 'both')
+		self.chart3_frame.pack(side = "left", expand = 1, fill = 'both')
+		self.chart4_frame.pack(side = "left", expand = 1, fill = 'both')
+
+	def key(self, event):
+		return
+#    root.status.set(repr(event.char)) 
 
 	def plot_altitude():
 	    global fig_altitude, dataPlot_altitude, a_altitude
 
 	    fig_altitude = Figure(figsize=(4, 4), dpi = (frame.winfo_width() - 50) / 16)
-	    dataPlot_altitude = FigureCanvasTkAgg(fig_altitude, master = chart1_frame)
+	    dataPlot_altitude = FigureCanvasTkAgg(fig_altitude, master = self.chart1_frame)
 	    a_altitude = fig_altitude.add_subplot(111)
 
 	    dataPlot_altitude.show()
@@ -158,7 +178,7 @@ class Chart(object):
 		global fig_temp, dataPlot_temp, a_temp
 
 	    fig_temp = Figure(figsize=(4, 4), dpi = (frame.winfo_width() - 50) / 16)
-	    dataPlot_temp = FigureCanvasTkAgg(fig_temp, master = chart2_frame)
+	    dataPlot_temp = FigureCanvasTkAgg(fig_temp, master = self.chart2_frame)
 	    a_temp = fig_temp.add_subplot(111)
 
 	    dataPlot_temp.show()
@@ -185,10 +205,14 @@ class Chart(object):
 class Panel(Tk.Frame):
 	""" Panel for showing current data 
 	"""
-	def __init__(self, parent):
+	def __init__(self, parent, container, payload):
 		super().__init___(self, parent)
 		self.pack(side = "left", expand = 1, padx = 20, fill = 'y')
 
+		self.container = container
+		self.payload = payload 
+
+# TODO need to add a target here: whether it's container or payload 
 	def update_panel(self):
 		pack_cnt.set("Packet Cnt: %d" % packet_cnt)
 		pressure_var.set("Atm Pressure %.1f kPa" % data_pressure[-1])
@@ -305,9 +329,9 @@ class ForceFrame(Tk.Frame):
 		else:
 			force_status.set("None Selected")
 			force_status_var = 0
-			
-# TODO set_connected variable 
-	def execute_button_callback(self, ser_connected):
+
+# TODO ser_connected variable and ser variable 
+	def execute_button_callback(self, ser_connected, ser):
 		try:
 			if ser_connected == 1:
 				if force_status_var == 1 or force_status_var == 2:
@@ -317,4 +341,22 @@ class ForceFrame(Tk.Frame):
 					print 'Nothing was executed'
 		except Exception as e:
 			print "Error: Could not write to serial"
+			# ????
 	    		root.status.set("Error: Could not write to serial. %s" % e)
+
+
+class TelemetryBox(Tk.Frame):
+	"""
+	"""
+	def __init__(self, parent):
+		self.stream_frame = Tk.Frame(parent, bg = "white")
+		self.scrollbar = Tk.Scrollbar(self.stream_frame)
+		self.listbox = Tk.Listbox(self.stream_frame, width = 600,height = 20, yscrollcommand=self.scrollbar.set)
+
+		self.pack_frame()
+
+	def pack_frame(self):
+		self.stream_frame.pack(side = "top", pady = 0, fill = 'both', expand = True)
+		self.scrollbar.pack(side = 'right', fill = 'y')
+		self.listbox.pack(side ='left', fill = 'both')
+		self.scrollbar.config(command=self.listbox.yview)

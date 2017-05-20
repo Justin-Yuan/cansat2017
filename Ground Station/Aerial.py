@@ -22,12 +22,12 @@ class Cansat(object):
 class Container(Cansat):
 	""" 
 	"""
-	def __init__(self, ):
+	def __init__(self):
 		super().__init__(self)
 
 
 class Payload(Cansat):
 	"""
 	"""
-	def __init__(self, ):
+	def __init__(self):
 		super().__init__(self)

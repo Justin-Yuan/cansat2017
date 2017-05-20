@@ -55,7 +55,7 @@ if __name__ == "__main__":
 	root.title('CANSAT - 2017	Team: ' + str(TEAM_NUM))
 
 	# initialize UI elements 
-	panel = Panel(root)
+	panel = Panel(root, container, payload)
 
 	# Text Variables  
 	text_var = TextVAr()
@@ -70,50 +70,26 @@ if __name__ == "__main__":
 	force_frame = ForceFrame(panel, text_var, force_status_var)
 		
 	# Main chart area
-	frame = Tk.Frame(root)
-	frame.pack(side='top', expand = 1, fill='x')
-	frame.bind("<Key>", key)
-	frame.focus_set()
-
-	chart1_frame = Tk.Frame(frame)
-	chart1_frame.pack(side = "left", expand = 1, fill = 'both')
-
-	chart2_frame = Tk.Frame(frame)
-	chart2_frame.pack(side = "left", expand = 1, fill = 'both')
-
-	chart3_frame = Tk.Frame(frame)
-	chart3_frame.pack(side = "left", expand = 1, fill = 'both')
-
-	chart4_frame = Tk.Frame(frame)
-	chart4_frame.pack(side = "left", expand = 1, fill = 'both')
+	chart = Chart(root, container, payload)
 
 	# Scroll Telemetry
-	stream_frame = Tk.Frame(root, bg = "white")
-	stream_frame.pack(side = "top", pady = 0, fill = 'both', expand = True)
-
-	scrollbar = Tk.Scrollbar(stream_frame)
-	scrollbar.pack(side = 'right', fill = 'y')
-
-	listbox = Tk.Listbox(stream_frame, width = 600,height = 20, yscrollcommand=scrollbar.set)
-	listbox.pack(side ='left', fill = 'both')
-	scrollbar.config(command=listbox.yview)
+	telemetry_box = TelemetryBox(root)
 	
-
 	# Bottom status bar
 	status = StatusBar(root)
 	status.pack(side='bottom', fill='x') 
 	
  	
  	# call loops 
- 	root.after(0, plot_altitude)
- 	root.after(0, plot_temperature)
-	root.after(0, plot_pitot)
-	root.after(0, plot_voltage)
+ 	root.after(0, chart.plot_altitude)
+ 	root.after(0, chart.plot_temperature)
+	root.after(0, chart.plot_pitot)
+	root.after(0, chart.plot_voltage)
 
-	root.after(0, update_mission_time)
-	root.after(0, update_flight_status)
-	root.after(0, update_left_ribbon)
-	root.after(1000, ser_test_write)
-	root.after(1000, conclude)
+	root.after(0, update_mission_time, text_var, root)
+	root.after(0, update_flight_status, ser_connected, text_var, root)
+	root.after(0, panel.update_panel)
+	root.after(1000, serial_update_write)
+	root.after(1000, conclude, frame)
 
 	root.mainloop()

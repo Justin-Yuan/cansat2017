@@ -47,16 +47,19 @@ def serial_update_write():
 	root.after(500, ser_test_write)
 
 
-def update_mission_time():
+def update_mission_time(text_var, root):
 	current_time = str(datetime.datetime.now())[0: 19]
-	mission_time.set("Mission Time: %s" % current_time)
+	text_var.mission_time.set("Mission Time: %s" % current_time)
 	root.after(1000, update_mission_time)
 
-def update_status():
+def update_flight_status(ser_connected, text_var, root):
 	if ser_connected == 1:	   
-		flight_status.set("Flight Status: " + flight_status_dict[data_state])
+		text_var.flight_status.set("Flight Status: " + flight_status_dict[data_state])
 	else if ser_connected == 0:
-		flight_status.set("Flight Status: Not Connected")
+		text_var.flight_status.set("Flight Status: Not Connected")
 	else:
-		flight_status.set("Flight Status: Unknown")
+		text_var.flight_status.set("Flight Status: Unknown")
 	root.after(200, update_flight_status)
+
+def conclude(frame):
+    frame.focus_set()
