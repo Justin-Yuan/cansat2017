@@ -20,7 +20,7 @@ except:
 ####################### Setup ########################################
 
 # team information
-TEAM_NUM = 0000
+TEAM_NUM = 6159
 baud_rate = 9600
 file_name = "cansat_2017.csv"
 

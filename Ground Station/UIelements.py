@@ -115,6 +115,7 @@ class StatusBar(Tk.Frame):
 class Chart(object):
     """ Chart class for data plots
     """
+
     def __init__(self, parent, container, payload):
         self.container = container
         self.payload = payload
@@ -140,6 +141,7 @@ class Chart(object):
     def key(self, event):
         return
 #    root.status.set(repr(event.char))
+
 
     def plot_altitude(self, target):
         global fig_altitude, dataPlot_altitude, a_altitude
@@ -168,12 +170,13 @@ class Chart(object):
             dataPlot_altitude.show()
             dataPlot_altitude.get_tk_widget().pack()
 
-            root.after(1000, plot_cts)
+            self.chart1_frame.after(1000, plot_cts)
 
         plot_cts()
 
     def plot_temperature(self, target):
-
+        # global root
+        # root = tk.Tk()
         global fig_temp, dataPlot_temp, a_temp
 
         fig_temp = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
@@ -196,12 +199,11 @@ class Chart(object):
             dataPlot_temp.show()
             dataPlot_temp.get_tk_widget().pack()
 
-            root.after(1000, plot_cts)
+            self.chart2_frame.after(1000, plot_cts)
 
         plot_cts()
 
     def plot_voltage(self, target):
-
         global fig_voltage, dataPlot_voltage, a_voltage
 
         fig_voltage = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
@@ -230,12 +232,11 @@ class Chart(object):
             dataPlot_voltage.show()
             dataPlot_voltage.get_tk_widget().pack()
 
-            root.after(1000, plot_cts)
+            self.chart3_frame.after(1000, plot_cts)
 
         plot_cts()
 
     def plot_pitot(self, target):
-
         global fig_pitot, dataPlot_pitot, a_pitot
 
         fig_pitot = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
@@ -261,7 +262,7 @@ class Chart(object):
             dataPlot_pitot.show()
             dataPlot_pitot.get_tk_widget().pack()
 
-            root.after(1000, plot_cts)
+            self.chart4_frame.after(1000, plot_cts)
 
         plot_cts()
 
