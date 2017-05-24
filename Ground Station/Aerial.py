@@ -16,6 +16,7 @@ class Cansat(object):
 		self.gps_num = 0
 		self.gps_speed = [0.0]
 
+		self.software_state = 0
 
 class Container(Cansat):
 	"""

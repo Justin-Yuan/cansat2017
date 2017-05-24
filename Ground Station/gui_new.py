@@ -39,10 +39,8 @@ flight_status_dict = {1:'Waiting', 2:'Ascending', 3:'Descending', 4:'Deploying',
 if __name__ == "__main__":
 	# wirte header to log file
 	f = open(file_name, 'a')
-	f.write("Team ID, Pack Cnt, Altitude, Pressure, Speed, Temp, Voltage, GPS Lat\
-				GPS Long, GPS Alt, GPS Sat#, GPS Speed, Com Time, Com Cnt, State, Cam Angle\n")
+	f.write("6159, GLIDER, MISSION_TIME, PACKET_CNT, ALTITUDE, PRESSURE, SPEED, TEMP, VOLTAGE, HEADING, SOFTWARE_STATE\n")
 	f.close()
-
 	# initialize Cansat objects
 	container = Container()
 	payload = Payload()
@@ -66,7 +64,7 @@ if __name__ == "__main__":
 	left_info_frame = LeftInfoFrame(panel, text_var)
 
 	# Force Button
-	force_frame = ForceFrame(panel, text_var, force_status_var)
+	force_frame = ForceFrame(panel, text_var, force_status_var, tel)
 
 	# Main chart area
 	chart = Chart(root, container, payload)
