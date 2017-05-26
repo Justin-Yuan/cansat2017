@@ -3,6 +3,9 @@ from subprocess import check_output
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+from tkFileDialog import asksaveasfile
+import csv
+import datetime
 
 try:
     # for Python2
@@ -12,20 +15,21 @@ except:
     import tkinter as Tk
 
 class MainGUI(Tk.Tk):
-    def __init__(self,parent):
+    def __init__(self,parent,target):
         Tk.Tk.__init__(self,parent)
         self.parent = parent
         self.geometry("1200x800+100+50")
-        self.config(menu=MenuBar(self))
+        self.config(menu=MenuBar(self, target))
 
 
 class MenuBar(Tk.Menu):
     """
     """
-    def __init__(self, parent):
+    def __init__(self, parent, target):
         Tk.Menu.__init__(self, parent)
         self.parent = parent
         self.initialize()
+        self.target = target
 
     def initialize(self):
         # File menu
@@ -62,7 +66,25 @@ class MenuBar(Tk.Menu):
         self.add_cascade(label="Help", menu=help_menu)
 
     def save_data(self):
-        pass
+
+        FILEOPENOPTIONS = dict(defaultextension='.csv', filetypes=[('CSV file','*.csv')])
+        with asksaveasfile(mode = "w+", **FILEOPENOPTIONS) as csvfile:
+            header = ["6159","GLIDER","MISSION_TIME","PACKET_CNT","ALTITUDE","PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
+            writer = csv.DictWriter(csvfile, fieldnames=header)
+            writer.writeheader()
+            for i in range(self.target.packet_cnt):
+                writer.writerow({"6159":6159,
+                                "GLIDER":"GLIDER",
+                                "MISSION_TIME":self.target.mission_time[i],
+                                "PACKET_CNT":i,
+                                "ALTITUDE":self.target.altitude[i],
+                                "PRESSURE":self.target.pressure[i],
+                                "SPEED":self.target.pitot[i],
+                                "TEMP": self.target.temp_outside[i],
+                                "VOLTAGE": self.target.voltage[i],
+                                "HEADING": self.target.heading[i],
+                                "SOFTWARE_STATE": self.target.software_state[i]})            
+
 
     def start_operation(self):
         pass
@@ -399,7 +421,7 @@ class ForceFrame(Tk.Frame):
         except Exception as e:
             print "Error: Could not write to serial"
             # ????
-            root.status.set("Error: Could not write to serial. %s" % e)
+            self.force_status.set("Error: Could not write to serial. %s" % e)
 
 
 class TelemetryBox(Tk.Frame):

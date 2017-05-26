@@ -38,8 +38,8 @@ flight_status_dict = {1:'Waiting', 2:'Ascending', 3:'Descending', 4:'Deploying',
 
 if __name__ == "__main__":
 	# wirte header to log file
-	f = open(file_name, 'a')
-	f.write("6159, GLIDER, MISSION_TIME, PACKET_CNT, ALTITUDE, PRESSURE, SPEED, TEMP, VOLTAGE, HEADING, SOFTWARE_STATE\n")
+	f = open(file_name, 'aw+')
+	f.write("6159,GLIDER,MISSION_TIME,PACKET_CNT,ALTITUDE,PRESSURE,SPEED,TEMP,VOLTAGE,HEADING,SOFTWARE_STATE\n")
 	f.close()
 	# initialize Cansat objects
 	container = Container()
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
 
 	# initialize the main gui
-	root = MainGUI(None)
+	root = MainGUI(None, container)
 	root.title('CANSAT - 2017	Team: ' + str(TEAM_NUM))
 
 	# initialize UI elements
