@@ -25,5 +25,5 @@ def conclude(chart):
 
 def check_target(container, payload, target):
 		if target == container:
-			if (target.flight_status == flight_status_dict[3]) && (target.altitude[-1] < 400):
+			if (target.flight_status == flight_status_dict[3]) and (target.altitude[-1] < 400):
 				target = payload

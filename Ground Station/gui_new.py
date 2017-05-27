@@ -91,6 +91,6 @@ if __name__ == "__main__":
 	root.after(1000, tel.serial_update_write, root, container)
 	root.after(1000, conclude, chart)
 
-	root.after(0, check_target, container, payload, target)
+	root.after(500, check_target, container, payload, target)
 
 	root.mainloop()

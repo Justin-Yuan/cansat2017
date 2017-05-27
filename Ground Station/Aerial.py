@@ -53,7 +53,7 @@ class Telemetry(object):
 			pressure = randint(101, 120) #1
 			pitot = randint(30,40) #2
 			temp_outside = randint(22, 32) #3
-			voltage = u(0, 8) #4
+			voltage = uniform(0, 8) #4
 			gps_lat = randint(0, 100) #5
 			gps_long = randint(0, 100) #6
 			gps_alt = randint(0, 1000) #7
