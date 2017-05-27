@@ -80,15 +80,15 @@ if __name__ == "__main__":
 
 
  	# call loops
- 	root.after(0, chart.plot_altitude, container)
- 	root.after(0, chart.plot_temperature, container)
-	root.after(0, chart.plot_pitot, container)
-	root.after(0, chart.plot_voltage, container)
+ 	root.after(0, chart.plot_altitude, target)
+ 	root.after(0, chart.plot_temperature, target)
+	root.after(0, chart.plot_pitot, target)
+	root.after(0, chart.plot_voltage, target)
 
 	root.after(0, update_mission_time, text_var, root)
 	root.after(0, update_flight_status, tel, text_var, root)
-	root.after(0, panel.update_panel, root, container, text_var)
-	root.after(1000, tel.serial_update_write, root, container)
+	root.after(0, panel.update_panel, root, target, text_var)
+	root.after(1000, tel.serial_update_write, root, target)
 	root.after(1000, conclude, chart)
 
 	root.after(500, check_target, container, payload, target)
