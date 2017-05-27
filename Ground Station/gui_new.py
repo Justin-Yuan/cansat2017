@@ -54,7 +54,7 @@ if __name__ == "__main__":
 	panel = Panel(root, container, payload)
 
 	# Text Variables
-	text_var = TextVar(container)
+	text_var = TextVar(root, container, payload)
 
 	# Top info bar
 	top_info_frame = TopInfoFrame(root, text_var, TEAM_NUM)
@@ -88,6 +88,6 @@ if __name__ == "__main__":
 	root.after(1000, tel.serial_update_write, root)
 	root.after(1000, conclude, chart)
 
-	root.after(500, check_target, container, payload, target)
+	# root.after(500, check_target, container, payload, target)
 
 	root.mainloop()

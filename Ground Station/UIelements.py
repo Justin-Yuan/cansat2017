@@ -319,7 +319,7 @@ class Panel(Tk.Frame):
 class TextVar(object):
     """ TextVar object to group text labels
     """
-    def __init__(self, target):
+    def __init__(self, root, container, payload):
         self.mission_time = Tk.StringVar()
         self.force_status = Tk.StringVar()
         self.flight_status = Tk.StringVar()
@@ -328,13 +328,20 @@ class TextVar(object):
         self.gps_lat = Tk.StringVar()
         self.gps_long = Tk.StringVar()
         self.gps_num = Tk.StringVar()
+        self.glider_status = Tk.StringVar()
+        self.container = container
+        self.payload = payload
+        self.target = container
+        self.set_text(root, self.target)
 
-        self.set_text(target)
-
-    def set_text(self, target):
+    def set_text(self, root, target):
+        self.target = check_target(self.container, self.payload, self.target)
+        self.glider_status.set("Current: " + self.target.identifier)
         self.force_status.set("None Selected")
         self.flight_status.set("Flight Status: Not Connected")
-        self.pack_cnt.set("Packet Cnt: %d" % target.packet_cnt)
+        self.pack_cnt.set("Packet Cnt: %d" % self.target.packet_cnt)
+
+        root.after(1000, self.set_text, root, self.target)
 
 class TopInfoFrame(Tk.Frame):
     """
@@ -345,7 +352,7 @@ class TopInfoFrame(Tk.Frame):
         self.label_top1 = Tk.Label(self.top_info_frame, text = "TEAM #"+str(TEAM_NUM), fg='white', bg='black')
         self.label_top2 = Tk.Label(self.top_info_frame, textvariable = text_var.mission_time, fg='white', bg='black')
         self.label_top3 = Tk.Label(self.top_info_frame, textvariable = text_var.flight_status, fg='white', bg='black')
-
+        self.label_top4 = Tk.Label(self.top_info_frame, textvariable = text_var.glider_status, fg='white', bg='black')
         self.pack_frame()
 
     def pack_frame(self):
@@ -353,6 +360,7 @@ class TopInfoFrame(Tk.Frame):
         self.label_top1.pack(side='left', expand = 1, fill = 'x')
         self.label_top2.pack(side='left', expand = 1, fill = 'x')
         self.label_top3.pack(side='left', expand = 1, fill = 'x')
+        self.label_top4.pack(side='left', expand = 1, fill = 'x')
 
 
 class LeftInfoFrame(Tk.Frame):
