@@ -83,7 +83,7 @@ class MenuBar(Tk.Menu):
                                 "TEMP": self.target.temp_outside[i],
                                 "VOLTAGE": self.target.voltage[i],
                                 "HEADING": self.target.heading[i],
-                                "SOFTWARE_STATE": self.target.software_state[i]})            
+                                "SOFTWARE_STATE": self.target.flight_status[i]})
 
 
     def start_operation(self):

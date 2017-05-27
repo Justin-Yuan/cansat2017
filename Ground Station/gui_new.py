@@ -45,6 +45,8 @@ if __name__ == "__main__":
 	container = Container()
 	payload = Payload()
 	tel = Telemetry(container)
+	# target viraible holds the current object being monitored
+	target = container
 
 
 	# initialize the main gui
@@ -88,5 +90,7 @@ if __name__ == "__main__":
 	root.after(0, panel.update_panel, root, container, text_var)
 	root.after(1000, tel.serial_update_write, root, container)
 	root.after(1000, conclude, chart)
+
+	root.after(0, check_target, container, payload, target)
 
 	root.mainloop()

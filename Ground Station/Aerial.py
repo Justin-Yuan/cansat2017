@@ -1,5 +1,6 @@
-from random import randint
+from random import randint, uniform
 import datetime
+
 class Cansat(object):
 	""" Cansat class to encapsulate shared variables and functions
 	"""
@@ -18,7 +19,7 @@ class Cansat(object):
 		self.gps_num = 0
 		self.gps_speed = [0.0]
 
-		self.software_state = [0]
+		self.flight_status = [0]
 
 class Container(Cansat):
 	"""
@@ -52,14 +53,14 @@ class Telemetry(object):
 			pressure = randint(101, 120) #1
 			pitot = randint(30,40) #2
 			temp_outside = randint(22, 32) #3
-			voltage = randint(0, 8) #4
+			voltage = u(0, 8) #4
 			gps_lat = randint(0, 100) #5
 			gps_long = randint(0, 100) #6
 			gps_alt = randint(0, 1000) #7
 			gps_num = randint(0, 10) #8
 			gps_speed = randint(30,40) #9
 			com_cnt = randint(0,3) #10
-			state = randint(0,7) #11
+			state = randint(1,7) #11
 			angle = randint(-180,180) #12
 			# heading?
 			heading = randint(0,10) #idk
@@ -71,7 +72,7 @@ class Telemetry(object):
 			target.voltage.append(voltage)
 			target.pitot.append(pitot)
 			target.heading.append(heading)
-			target.software_state.append(state)
+			target.flight_status.append(state)
 
 
 		elif self.ser_connected:
