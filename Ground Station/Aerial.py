@@ -1,5 +1,6 @@
 from random import randint, uniform
 import datetime
+import helpers
 
 class Cansat(object):
 	""" Cansat class to encapsulate shared variables and functions
@@ -18,7 +19,6 @@ class Cansat(object):
 		self.gps_alt = [0.0]
 		self.gps_num = 0
 		self.gps_speed = [0.0]
-
 		self.flight_status = [0]
 
 class Container(Cansat):
@@ -26,6 +26,7 @@ class Container(Cansat):
 	"""
 	def __init__(self):
 		Cansat.__init__(self)
+		self.identifier = "CONTAINER"
 
 
 class Payload(Cansat):
@@ -33,21 +34,25 @@ class Payload(Cansat):
 	"""
 	def __init__(self):
 		Cansat.__init__(self)
+		self.identifier = "GLIDER"
+
 
 
 class Telemetry(object):
 	"""
 	"""
-	def __init__(self, target):
+	def __init__(self, container, payload):
 		self.ser = None
 		self.ser_connected = False
-		self.target = target
-
+		self.container = container
+		self.payload = payload
+		self.target = container
 		# for testing wihtout serial only
 		self.csv_test = True
 
-	def serial_update_write(self, root, target):
+	def serial_update_write(self, root):
 		# for testing plots without serial connection only, delete this later
+		self.target = helpers.check_target(self.container, self.payload, self.target)
 		if self.csv_test:
 			altitude = randint(1, 400)
 			pressure = randint(101, 120) #1
@@ -64,15 +69,15 @@ class Telemetry(object):
 			angle = randint(-180,180) #12
 			# heading?
 			heading = randint(0,10) #idk
-			target.packet_cnt += 1
-			target.mission_time.append(str(datetime.datetime.now())[11:16])
-			target.altitude.append(altitude)
-			target.pressure.append(pressure)
-			target.temp_outside.append(temp_outside)
-			target.voltage.append(voltage)
-			target.pitot.append(pitot)
-			target.heading.append(heading)
-			target.flight_status.append(state)
+			self.target.packet_cnt += 1
+			self.target.mission_time.append(str(datetime.datetime.now())[11:16])
+			self.target.altitude.append(altitude)
+			self.target.pressure.append(pressure)
+			self.target.temp_outside.append(temp_outside)
+			self.target.voltage.append(voltage)
+			self.target.pitot.append(pitot)
+			self.target.heading.append(heading)
+			self.target.flight_status.append(state)
 
 
 		elif self.ser_connected:
@@ -99,4 +104,4 @@ class Telemetry(object):
 				# need target.heading
 				target.state = float(data_list[7])
 
-		root.after(1000, self.serial_update_write, root, target)
+		root.after(1000, self.serial_update_write, root)

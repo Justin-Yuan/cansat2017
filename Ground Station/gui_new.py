@@ -38,19 +38,16 @@ flight_status_dict = {1:'Waiting', 2:'Ascending', 3:'Descending', 4:'Deploying',
 
 if __name__ == "__main__":
 	# wirte header to log file
-	f = open(file_name, 'aw+')
-	f.write("6159,GLIDER,MISSION_TIME,PACKET_CNT,ALTITUDE,PRESSURE,SPEED,TEMP,VOLTAGE,HEADING,SOFTWARE_STATE\n")
-	f.close()
+	# f = open(file_name, 'aw+')
+	# f.write("6159,GLIDER,MISSION_TIME,PACKET_CNT,ALTITUDE,PRESSURE,SPEED,TEMP,VOLTAGE,HEADING,SOFTWARE_STATE\n")
+	# f.close()
 	# initialize Cansat objects
 	container = Container()
 	payload = Payload()
-	tel = Telemetry(container)
-	# target viraible holds the current object being monitored
-	target = container
-
+	tel = Telemetry(container, payload)
 
 	# initialize the main gui
-	root = MainGUI(None, container)
+	root = MainGUI(None, container, payload)
 	root.title('CANSAT - 2017	Team: ' + str(TEAM_NUM))
 
 	# initialize UI elements
@@ -78,17 +75,17 @@ if __name__ == "__main__":
 	status = StatusBar(root)
 	status.pack(side='bottom', fill='x')
 
-
+	target = container
  	# call loops
- 	root.after(0, chart.plot_altitude, target)
- 	root.after(0, chart.plot_temperature, target)
-	root.after(0, chart.plot_pitot, target)
-	root.after(0, chart.plot_voltage, target)
+ 	root.after(0, chart.plot_altitude)
+ 	root.after(0, chart.plot_temperature)
+	root.after(0, chart.plot_pitot)
+	root.after(0, chart.plot_voltage)
 
 	root.after(0, update_mission_time, text_var, root)
 	root.after(0, update_flight_status, tel, text_var, root)
 	root.after(0, panel.update_panel, root, target, text_var)
-	root.after(1000, tel.serial_update_write, root, target)
+	root.after(1000, tel.serial_update_write, root)
 	root.after(1000, conclude, chart)
 
 	root.after(500, check_target, container, payload, target)

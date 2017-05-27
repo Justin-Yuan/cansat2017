@@ -7,6 +7,7 @@ from tkFileDialog import asksaveasfile
 import csv
 import datetime
 
+from helpers import *
 try:
     # for Python2
     import Tkinter as Tk
@@ -15,21 +16,23 @@ except:
     import tkinter as Tk
 
 class MainGUI(Tk.Tk):
-    def __init__(self,parent,target):
+    def __init__(self,parent,container, payload):
         Tk.Tk.__init__(self,parent)
         self.parent = parent
         self.geometry("1200x800+100+50")
-        self.config(menu=MenuBar(self, target))
+        self.config(menu=MenuBar(self, container, payload))
 
 
 class MenuBar(Tk.Menu):
     """
     """
-    def __init__(self, parent, target):
+    def __init__(self, parent, container, payload):
         Tk.Menu.__init__(self, parent)
         self.parent = parent
         self.initialize()
-        self.target = target
+        self.container = container
+        self.payload = payload
+        self.target = container
 
     def initialize(self):
         # File menu
@@ -66,7 +69,7 @@ class MenuBar(Tk.Menu):
         self.add_cascade(label="Help", menu=help_menu)
 
     def save_data(self):
-
+        self.target = check_target(self.container, self.payload, self.target)
         FILEOPENOPTIONS = dict(defaultextension='.csv', filetypes=[('CSV file','*.csv')])
         with asksaveasfile(mode = "w+", **FILEOPENOPTIONS) as csvfile:
             header = ["6159","GLIDER","MISSION_TIME","PACKET_CNT","ALTITUDE","PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
@@ -74,7 +77,7 @@ class MenuBar(Tk.Menu):
             writer.writeheader()
             for i in range(self.target.packet_cnt):
                 writer.writerow({"6159":6159,
-                                "GLIDER":"GLIDER",
+                                "GLIDER": self.target.identifier,
                                 "MISSION_TIME":self.target.mission_time[i],
                                 "PACKET_CNT":i,
                                 "ALTITUDE":self.target.altitude[i],
@@ -141,7 +144,6 @@ class Chart(object):
     def __init__(self, parent, container, payload):
         self.container = container
         self.payload = payload
-
         self.frame = Tk.Frame(parent)
         self.chart1_frame = Tk.Frame(self.frame)
         self.chart2_frame = Tk.Frame(self.frame)
@@ -165,7 +167,7 @@ class Chart(object):
 #    root.status.set(repr(event.char))
 
 
-    def plot_altitude(self, target):
+    def plot_altitude(self):
         global fig_altitude, dataPlot_altitude, a_altitude
 
         fig_altitude = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
@@ -175,11 +177,13 @@ class Chart(object):
         dataPlot_altitude.show()
         dataPlot_altitude.get_tk_widget().pack()
 
-        def plot_cts():
+        def plot_cts(target):
             global a_altitude
-
+            target = check_target(self.container, self.payload, target)
             x_axis1 = range(0, len(target.altitude))
             x_axis2 = range(0, len(target.gps_alt))
+
+            print target.identifier
 
             a_altitude.clear()
             a_altitude.plot(x_axis1, target.altitude, "r", label = "BMP180")
@@ -192,11 +196,11 @@ class Chart(object):
             dataPlot_altitude.show()
             dataPlot_altitude.get_tk_widget().pack()
 
-            self.chart1_frame.after(1000, plot_cts)
+            self.chart1_frame.after(1000, plot_cts, target)
 
-        plot_cts()
+        plot_cts(self.container)
 
-    def plot_temperature(self, target):
+    def plot_temperature(self):
         # global root
         # root = tk.Tk()
         global fig_temp, dataPlot_temp, a_temp
@@ -208,8 +212,9 @@ class Chart(object):
         dataPlot_temp.show()
         dataPlot_temp.get_tk_widget().pack()
 
-        def plot_cts():
+        def plot_cts(target):
             global a_temp
+            target = check_target(self.container, self.payload, target)
             x_axis = range(0, len(target.temp_outside))
 
             a_temp.clear()
@@ -221,11 +226,11 @@ class Chart(object):
             dataPlot_temp.show()
             dataPlot_temp.get_tk_widget().pack()
 
-            self.chart2_frame.after(1000, plot_cts)
+            self.chart2_frame.after(1000, plot_cts, target)
 
-        plot_cts()
+        plot_cts(self.container)
 
-    def plot_voltage(self, target):
+    def plot_voltage(self):
         global fig_voltage, dataPlot_voltage, a_voltage
 
         fig_voltage = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
@@ -235,10 +240,10 @@ class Chart(object):
         dataPlot_voltage.show()
         dataPlot_voltage.get_tk_widget().pack()
 
-        def plot_cts():
+        def plot_cts(target):
             global a_voltage
             a_voltage.clear()
-
+            target = check_target(self.container, self.payload, target)
             voltage = target.voltage[len(target.voltage) - 1]
             if voltage > 7.3:
                 a_voltage.bar(0, voltage, 1, color = 'g')
@@ -254,11 +259,11 @@ class Chart(object):
             dataPlot_voltage.show()
             dataPlot_voltage.get_tk_widget().pack()
 
-            self.chart3_frame.after(1000, plot_cts)
+            self.chart3_frame.after(1000, plot_cts, target)
 
-        plot_cts()
+        plot_cts(self.container)
 
-    def plot_pitot(self, target):
+    def plot_pitot(self):
         global fig_pitot, dataPlot_pitot, a_pitot
 
         fig_pitot = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
@@ -268,8 +273,9 @@ class Chart(object):
         dataPlot_pitot.show()
         dataPlot_pitot.get_tk_widget().pack()
 
-        def plot_cts():
+        def plot_cts(target):
             global a_pitot
+            target = check_target(self.container, self.payload, target)
             x_axis1 = range(0, len(target.pitot))
             x_axis2 = range(0, len(target.gps_speed))
 
@@ -284,9 +290,9 @@ class Chart(object):
             dataPlot_pitot.show()
             dataPlot_pitot.get_tk_widget().pack()
 
-            self.chart4_frame.after(1000, plot_cts)
+            self.chart4_frame.after(1000, plot_cts, target)
 
-        plot_cts()
+        plot_cts(self.container)
 
 
 class Panel(Tk.Frame):
