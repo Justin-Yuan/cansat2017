@@ -41,20 +41,23 @@ if __name__ == "__main__":
 	# f = open(file_name, 'aw+')
 	# f.write("6159,GLIDER,MISSION_TIME,PACKET_CNT,ALTITUDE,PRESSURE,SPEED,TEMP,VOLTAGE,HEADING,SOFTWARE_STATE\n")
 	# f.close()
-	# initialize Cansat objects
-	container = Container()
-	payload = Payload()
-	tel = Telemetry(container, payload)
+    # old: initialize Cansat objects
+	# container = Container()
+    # payload = Payload()
+	
+    # new: initialize cansat
+    cansat = Cansat()
+    tel = Telemetry(cansat)
 
 	# initialize the main gui
-	root = MainGUI(None, container, payload)
+	root = MainGUI(None, cansat)
 	root.title('CANSAT - 2017	Team: ' + str(TEAM_NUM))
 
 	# initialize UI elements
-	panel = Panel(root, container, payload)
+	panel = Panel(root, cansat)
 
 	# Text Variables
-	text_var = TextVar(root, container, payload)
+	text_var = TextVar(root, cansat)
 
 	# Top info bar
 	top_info_frame = TopInfoFrame(root, text_var, TEAM_NUM)
@@ -66,7 +69,7 @@ if __name__ == "__main__":
 	force_frame = ForceFrame(panel, text_var, force_status_var, tel)
 
 	# Main chart area
-	chart = Chart(root, container, payload)
+	chart = Chart(root, cansat)
 
 	# Scroll Telemetry
 	telemetry_box = TelemetryBox(root)
@@ -75,7 +78,7 @@ if __name__ == "__main__":
 	status = StatusBar(root)
 	status.pack(side='bottom', fill='x')
 
-	target = container
+
  	# call loops
  	root.after(0, chart.plot_altitude)
  	root.after(0, chart.plot_temperature)
@@ -84,7 +87,7 @@ if __name__ == "__main__":
 
 	root.after(0, update_mission_time, text_var, root)
 	root.after(0, update_flight_status, tel, text_var, root)
-	root.after(0, panel.update_panel, root, target, text_var)
+	root.after(0, panel.update_panel, root, cansat, text_var)
 	root.after(1000, tel.serial_update_write, root)
 	root.after(1000, conclude, chart)
 

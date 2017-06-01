@@ -8,7 +8,7 @@ class Cansat(object):
 	def __init__(self):
 		self.packet_cnt = 0
 		self.altitude = [0.0]
-		self.mission_time = [str(datetime.datetime.now())[11:19]]
+		self.mission_time = [str(datetime.datetime.now())[15:19]]
 		self.pressure = [0.0]
 		self.pitot = [0.0]
 		self.temp_outside = [0.0]
@@ -20,6 +20,7 @@ class Cansat(object):
 		self.gps_num = 0
 		self.gps_speed = [0.0]
 		self.flight_status = [0]
+        self.target = "Container"
 
 class Container(Cansat):
 	"""
