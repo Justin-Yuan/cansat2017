@@ -23,10 +23,8 @@ def update_flight_status(tel, text_var, root):
 def conclude(chart):
     chart.frame.focus_set()
 
-def check_target(container, payload, target):
-	if target == container:
-		if (target.flight_status[-1] == 3) and (target.altitude[-1] < 400):
-			return payload
-		else:
-			return container
-	return payload
+def check_target(cansat):
+	if (cansat.flight_status[-1] == 3) and (cansat.altitude[-1] < 400):
+		if cansat.identifier == "CONTAINER":
+			cansat.identifier = "GLIDER"
+	return cansat

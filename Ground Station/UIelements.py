@@ -16,23 +16,21 @@ except:
     import tkinter as Tk
 
 class MainGUI(Tk.Tk):
-    def __init__(self,parent,container, payload):
+    def __init__(self,parent, cansat):
         Tk.Tk.__init__(self,parent)
         self.parent = parent
         self.geometry("1200x800+100+50")
-        self.config(menu=MenuBar(self, container, payload))
+        self.config(menu=MenuBar(self, cansat))
 
 
 class MenuBar(Tk.Menu):
     """
     """
-    def __init__(self, parent, container, payload):
+    def __init__(self, parent, cansat):
         Tk.Menu.__init__(self, parent)
         self.parent = parent
         self.initialize()
-        self.container = container
-        self.payload = payload
-        self.target = container
+        self.cansat = cansat
 
     def initialize(self):
         # File menu
@@ -69,24 +67,24 @@ class MenuBar(Tk.Menu):
         self.add_cascade(label="Help", menu=help_menu)
 
     def save_data(self):
-        self.target = check_target(self.container, self.payload, self.target)
+        self.cansat = check_target(self.cansat)
         FILEOPENOPTIONS = dict(defaultextension='.csv', filetypes=[('CSV file','*.csv')])
         with asksaveasfile(mode = "w+", **FILEOPENOPTIONS) as csvfile:
             header = ["6159","GLIDER","MISSION_TIME","PACKET_CNT","ALTITUDE","PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
             writer = csv.DictWriter(csvfile, fieldnames=header)
             writer.writeheader()
-            for i in range(self.target.packet_cnt):
+            for i in range(self.cansat.packet_cnt):
                 writer.writerow({"6159":6159,
-                                "GLIDER": self.target.identifier,
-                                "MISSION_TIME":self.target.mission_time[i],
+                                "GLIDER": self.cansat.identifier,
+                                "MISSION_TIME":self.cansat.mission_time[i],
                                 "PACKET_CNT":i,
-                                "ALTITUDE":self.target.altitude[i],
-                                "PRESSURE":self.target.pressure[i],
-                                "SPEED":self.target.pitot[i],
-                                "TEMP": self.target.temp_outside[i],
-                                "VOLTAGE": self.target.voltage[i],
-                                "HEADING": self.target.heading[i],
-                                "SOFTWARE_STATE": self.target.flight_status[i]})
+                                "ALTITUDE":self.cansat.altitude[i],
+                                "PRESSURE":self.cansat.pressure[i],
+                                "SPEED":self.cansat.pitot[i],
+                                "TEMP": self.cansat.temp_outside[i],
+                                "VOLTAGE": self.cansat.voltage[i],
+                                "HEADING": self.cansat.heading[i],
+                                "SOFTWARE_STATE": self.cansat.flight_status[i]})
 
 
     def start_operation(self):
@@ -141,9 +139,8 @@ class Chart(object):
     """ Chart class for data plots
     """
 
-    def __init__(self, parent, container, payload):
-        self.container = container
-        self.payload = payload
+    def __init__(self, parent, cansat):
+        self.cansat = cansat
         self.frame = Tk.Frame(parent)
         self.chart1_frame = Tk.Frame(self.frame)
         self.chart2_frame = Tk.Frame(self.frame)
@@ -166,7 +163,13 @@ class Chart(object):
         return
 #    root.status.set(repr(event.char))
 
-
+    def update_identifier(self):
+        def update_cts(self):
+            print self.cansat.identifier
+            if (cansat.flight_status[-1] == 3) and (cansat.altitude[-1] < 400):
+                self.cansat = check_target(self.cansat)
+            self.after(1000, update_cts)
+        update_cts
     def plot_altitude(self):
         global fig_altitude, dataPlot_altitude, a_altitude
 
@@ -177,9 +180,9 @@ class Chart(object):
         dataPlot_altitude.show()
         dataPlot_altitude.get_tk_widget().pack()
 
-        def plot_cts(target):
+        def plot_cts():
             global a_altitude
-            target = check_target(self.container, self.payload, target)
+            target = self.cansat
             x_axis1 = range(0, len(target.altitude))
             x_axis2 = range(0, len(target.gps_alt))
 
@@ -196,9 +199,9 @@ class Chart(object):
             dataPlot_altitude.show()
             dataPlot_altitude.get_tk_widget().pack()
 
-            self.chart1_frame.after(1000, plot_cts, target)
+            self.chart1_frame.after(1000, plot_cts)
 
-        plot_cts(self.container)
+        plot_cts()
 
     def plot_temperature(self):
         # global root
@@ -212,13 +215,12 @@ class Chart(object):
         dataPlot_temp.show()
         dataPlot_temp.get_tk_widget().pack()
 
-        def plot_cts(target):
+        def plot_cts():
             global a_temp
-            target = check_target(self.container, self.payload, target)
-            x_axis = range(0, len(target.temp_outside))
+            x_axis = range(0, len(self.cansat.temp_outside))
 
             a_temp.clear()
-            a_temp.plot(x_axis, target.temp_outside, "r", label = "Outside")
+            a_temp.plot(x_axis, self.cansat.temp_outside, "r", label = "Outside")
 
             a_temp.set_title("Temperature (C)")
             a_temp.set_ylim([0, 60])
@@ -226,9 +228,9 @@ class Chart(object):
             dataPlot_temp.show()
             dataPlot_temp.get_tk_widget().pack()
 
-            self.chart2_frame.after(1000, plot_cts, target)
+            self.chart2_frame.after(1000, plot_cts)
 
-        plot_cts(self.container)
+        plot_cts()
 
     def plot_voltage(self):
         global fig_voltage, dataPlot_voltage, a_voltage
@@ -240,11 +242,10 @@ class Chart(object):
         dataPlot_voltage.show()
         dataPlot_voltage.get_tk_widget().pack()
 
-        def plot_cts(target):
+        def plot_cts():
             global a_voltage
             a_voltage.clear()
-            target = check_target(self.container, self.payload, target)
-            voltage = target.voltage[len(target.voltage) - 1]
+            voltage = self.cansat.voltage[len(self.cansat.voltage) - 1]
             if voltage > 7.3:
                 a_voltage.bar(0, voltage, 1, color = 'g')
             elif voltage > 5:
@@ -259,9 +260,9 @@ class Chart(object):
             dataPlot_voltage.show()
             dataPlot_voltage.get_tk_widget().pack()
 
-            self.chart3_frame.after(1000, plot_cts, target)
+            self.chart3_frame.after(1000, plot_cts)
 
-        plot_cts(self.container)
+        plot_cts()
 
     def plot_pitot(self):
         global fig_pitot, dataPlot_pitot, a_pitot
@@ -273,9 +274,9 @@ class Chart(object):
         dataPlot_pitot.show()
         dataPlot_pitot.get_tk_widget().pack()
 
-        def plot_cts(target):
+        def plot_cts():
             global a_pitot
-            target = check_target(self.container, self.payload, target)
+            target = self.cansat
             x_axis1 = range(0, len(target.pitot))
             x_axis2 = range(0, len(target.gps_speed))
 
@@ -290,20 +291,19 @@ class Chart(object):
             dataPlot_pitot.show()
             dataPlot_pitot.get_tk_widget().pack()
 
-            self.chart4_frame.after(1000, plot_cts, target)
+            self.chart4_frame.after(1000, plot_cts)
 
-        plot_cts(self.container)
+        plot_cts()
 
 
 class Panel(Tk.Frame):
     """ Panel for showing current data
     """
-    def __init__(self, parent, container, payload):
+    def __init__(self, parent, cansat):
         Tk.Frame.__init__(self, parent)
         self.pack(side = "left", expand = 1, padx = 20, fill = 'y')
 
-        self.container = container
-        self.payload = payload
+        self.cansat = cansat
 
 # TODO need to add a target here: whether it's container or payload
     def update_panel(self, root, target, text_var):
@@ -319,7 +319,7 @@ class Panel(Tk.Frame):
 class TextVar(object):
     """ TextVar object to group text labels
     """
-    def __init__(self, root, container, payload):
+    def __init__(self, root, cansat):
         self.mission_time = Tk.StringVar()
         self.force_status = Tk.StringVar()
         self.flight_status = Tk.StringVar()
@@ -329,19 +329,18 @@ class TextVar(object):
         self.gps_long = Tk.StringVar()
         self.gps_num = Tk.StringVar()
         self.glider_status = Tk.StringVar()
-        self.container = container
-        self.payload = payload
-        self.target = container
-        self.set_text(root, self.target)
+        self.cansat = cansat
+        self.set_text(root)
 
-    def set_text(self, root, target):
-        self.target = check_target(self.container, self.payload, self.target)
-        self.glider_status.set("Current: " + self.target.identifier)
+
+    def set_text(self, root):
+        self.cansat = check_target(self.cansat)
+        self.glider_status.set("Current: " + self.cansat.identifier)
         self.force_status.set("None Selected")
         self.flight_status.set("Flight Status: Not Connected")
-        self.pack_cnt.set("Packet Cnt: %d" % self.target.packet_cnt)
+        self.pack_cnt.set("Packet Cnt: %d" % self.cansat.packet_cnt)
 
-        root.after(1000, self.set_text, root, self.target)
+        root.after(1000, self.set_text, root)
 
 class TopInfoFrame(Tk.Frame):
     """

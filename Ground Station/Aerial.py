@@ -8,52 +8,50 @@ class Cansat(object):
 	def __init__(self):
 		self.packet_cnt = 0
 		self.altitude = [0.0]
-		self.mission_time = [str(datetime.datetime.now())[15:19]]
-		self.pressure = [0.0]
+		self.mission_time = [str(datetime.datetime.now())[14:19]]
+		self.pressure = [0.0] # glider only
 		self.pitot = [0.0]
 		self.temp_outside = [0.0]
-		self.voltage = [0.0]
-		self.heading = [0.0]
+		self.voltage = [0.0]  # solar power voltage for glider
+		self.heading = [0.0]  # glider only
 		self.gps_lat = [0.0]
 		self.gps_long = [0.0]
 		self.gps_alt = [0.0]
 		self.gps_num = 0
 		self.gps_speed = [0.0]
 		self.flight_status = [0]
-        self.target = "Container"
-
-class Container(Cansat):
-	"""
-	"""
-	def __init__(self):
-		Cansat.__init__(self)
 		self.identifier = "CONTAINER"
 
-
-class Payload(Cansat):
-	"""
-	"""
-	def __init__(self):
-		Cansat.__init__(self)
-		self.identifier = "GLIDER"
+# class Container(Cansat):
+# 	"""
+# 	"""
+# 	def __init__(self):
+# 		Cansat.__init__(self)
+# 		self.identifier = "CONTAINER"
+#
+#
+# class Payload(Cansat):
+# 	"""
+# 	"""
+# 	def __init__(self):
+# 		Cansat.__init__(self)
+# 		self.identifier = "GLIDER"
 
 
 
 class Telemetry(object):
 	"""
 	"""
-	def __init__(self, container, payload):
+	def __init__(self, cansat):
 		self.ser = None
 		self.ser_connected = False
-		self.container = container
-		self.payload = payload
-		self.target = container
+		self.cansat = cansat
 		# for testing wihtout serial only
 		self.csv_test = True
 
 	def serial_update_write(self, root):
 		# for testing plots without serial connection only, delete this later
-		self.target = helpers.check_target(self.container, self.payload, self.target)
+		self.cansat = helpers.check_target(self.cansat)
 		if self.csv_test:
 			altitude = randint(1, 400)
 			pressure = randint(101, 120) #1
@@ -70,15 +68,15 @@ class Telemetry(object):
 			angle = randint(-180,180) #12
 			# heading?
 			heading = randint(0,10) #idk
-			self.target.packet_cnt += 1
-			self.target.mission_time.append(str(datetime.datetime.now())[11:16])
-			self.target.altitude.append(altitude)
-			self.target.pressure.append(pressure)
-			self.target.temp_outside.append(temp_outside)
-			self.target.voltage.append(voltage)
-			self.target.pitot.append(pitot)
-			self.target.heading.append(heading)
-			self.target.flight_status.append(state)
+			self.cansat.packet_cnt += 1
+			self.cansat.mission_time.append(str(datetime.datetime.now())[14:19])
+			self.cansat.altitude.append(altitude)
+			self.cansat.pressure.append(pressure)
+			self.cansat.temp_outside.append(temp_outside)
+			self.cansat.voltage.append(voltage)
+			self.cansat.pitot.append(pitot)
+			self.cansat.heading.append(heading)
+			self.cansat.flight_status.append(state)
 
 
 		elif self.ser_connected:
