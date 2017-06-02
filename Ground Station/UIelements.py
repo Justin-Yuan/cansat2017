@@ -67,7 +67,7 @@ class MenuBar(Tk.Menu):
         self.add_cascade(label="Help", menu=help_menu)
 
     def save_data(self):
-        self.cansat = check_target(self.cansat)
+
         FILEOPENOPTIONS = dict(defaultextension='.csv', filetypes=[('CSV file','*.csv')])
         with asksaveasfile(mode = "w+", **FILEOPENOPTIONS) as csvfile:
             header = ["6159","GLIDER","MISSION_TIME","PACKET_CNT","ALTITUDE","PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
@@ -84,7 +84,7 @@ class MenuBar(Tk.Menu):
                                 "TEMP": self.cansat.temp_outside[i],
                                 "VOLTAGE": self.cansat.voltage[i],
                                 "HEADING": self.cansat.heading[i],
-                                "SOFTWARE_STATE": self.cansat.flight_status[i]})
+                                "SOFTWARE_STATE": self.data.flight_status[i]})
 
 
     def start_operation(self):
@@ -162,14 +162,6 @@ class Chart(object):
     def key(self, event):
         return
 #    root.status.set(repr(event.char))
-
-    def update_identifier(self):
-        def update_cts(self):
-            print self.cansat.identifier
-            if (cansat.flight_status[-1] == 3) and (cansat.altitude[-1] < 400):
-                self.cansat = check_target(self.cansat)
-            self.after(1000, update_cts)
-        update_cts
     def plot_altitude(self):
         global fig_altitude, dataPlot_altitude, a_altitude
 
@@ -182,15 +174,14 @@ class Chart(object):
 
         def plot_cts():
             global a_altitude
-            target = self.cansat
-            x_axis1 = range(0, len(target.altitude))
-            x_axis2 = range(0, len(target.gps_alt))
+            x_axis1 = range(0, len(self.cansat.altitude))
+            x_axis2 = range(0, len(self.cansat.gps_alt))
 
-            print target.identifier
+            print self.cansat.identifier
 
             a_altitude.clear()
-            a_altitude.plot(x_axis1, target.altitude, "r", label = "BMP180")
-            a_altitude.plot(x_axis2, target.gps_alt, "b", label = "GPS")
+            a_altitude.plot(x_axis1, self.cansat.altitude, "r", label = "BMP180")
+            a_altitude.plot(x_axis2, self.cansat.gps_alt, "b", label = "GPS")
 
 
             a_altitude.set_title("Altitude (m)")
@@ -302,7 +293,6 @@ class Panel(Tk.Frame):
     def __init__(self, parent, cansat):
         Tk.Frame.__init__(self, parent)
         self.pack(side = "left", expand = 1, padx = 20, fill = 'y')
-
         self.cansat = cansat
 
 # TODO need to add a target here: whether it's container or payload
@@ -334,7 +324,6 @@ class TextVar(object):
 
 
     def set_text(self, root):
-        self.cansat = check_target(self.cansat)
         self.glider_status.set("Current: " + self.cansat.identifier)
         self.force_status.set("None Selected")
         self.flight_status.set("Flight Status: Not Connected")

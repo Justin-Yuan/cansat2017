@@ -18,13 +18,18 @@ def update_flight_status(tel, text_var, root):
 	else:
 		text_var.flight_status.set("Flight Status: Unknown")
 
-	root.after(200, update_flight_status, tel, text_var, root)
+	root.after(500, update_flight_status, tel, text_var, root)
 
 def conclude(chart):
     chart.frame.focus_set()
 
 def check_target(cansat):
-	if (cansat.flight_status[-1] == 3) and (cansat.altitude[-1] < 400):
+	if (cansat.flight_status == 3) and (cansat.altitude[-1] < 400):
 		if cansat.identifier == "CONTAINER":
 			cansat.identifier = "GLIDER"
 	return cansat
+
+# in case of processor reset packet_cnt needs to be cts
+# can just use a script to go through and fix any discontinuities
+def check_packet_cnt():
+	pass

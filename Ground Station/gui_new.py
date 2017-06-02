@@ -22,12 +22,10 @@ except:
 # team information
 TEAM_NUM = 6159
 baud_rate = 9600
-file_name = "cansat_2017.csv"
+file_name = "CANSAT2017_TLM_6159_<TEAM_NAME>.csv"
 
-# initialize serial communication
 # Vars
 force_status_var = 0
-packet_cnt = 0
 last_com_time = 'N/A'
 
 var_dict = {1:'data_altitude',2:'data_pressure',3:'data_pitot',4:'data_temp_outsi'}
@@ -38,16 +36,16 @@ flight_status_dict = {1:'Waiting', 2:'Ascending', 3:'Descending', 4:'Deploying',
 
 if __name__ == "__main__":
     # wirte header to log file
-    # f = open(file_name, 'aw+')
-    # f.write("6159,GLIDER,MISSION_TIME,PACKET_CNT,ALTITUDE,PRESSURE,SPEED,TEMP,VOLTAGE,HEADING,SOFTWARE_STATE\n")
-    # f.close()
+    f = open(file_name, 'aw+')
+    f.write("6159,OBJECT,MISSION_TIME,PACKET_CNT,ALTITUDE,PRESSURE,SPEED,TEMP,VOLTAGE,HEADING,SOFTWARE_STATE\n")
+    f.close()
     # old: initialize Cansat objects
     # container = Container()
     # payload = Payload()
 
     # new: initialize cansat
     cansat = Cansat()
-    tel = Telemetry(cansat)
+    tel = Telemetry(cansat, file_name)
 
     # initialize the main gui
     root = MainGUI(None, cansat)
@@ -84,14 +82,15 @@ if __name__ == "__main__":
     root.after(0, chart.plot_temperature)
     root.after(0, chart.plot_pitot)
     root.after(0, chart.plot_voltage)
-
+    root.after(0, cansat.update_identifier, root)
 
     root.after(0, update_mission_time, text_var, root)
     root.after(0, update_flight_status, tel, text_var, root)
     root.after(0, panel.update_panel, root, cansat, text_var)
     root.after(1000, tel.serial_update_write, root)
+    root.after(1000, tel.write_to_csv, root)
     root.after(1000, conclude, chart)
-    # root.after(1000, tel.csv_update_write, root)
+
 
     # root.after(500, check_target, container, payload, target)
 
