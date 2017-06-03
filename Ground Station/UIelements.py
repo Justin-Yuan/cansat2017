@@ -153,6 +153,7 @@ class Chart(object):
         self.chart2_frame = Tk.Frame(self.frame)
         self.chart3_frame = Tk.Frame(self.frame)
         self.chart4_frame = Tk.Frame(self.frame)
+        self.chart5_frame = Tk.Frame(self.frame)
 
         self.pack_frame()
 
@@ -165,6 +166,8 @@ class Chart(object):
         self.chart2_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart3_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart4_frame.pack(side = "left", expand = 1, fill = 'both')
+        self.chart5_frame.pack(side = "left", expand = 1, fill = 'both')
+
 
     def key(self, event):
         return
@@ -184,7 +187,7 @@ class Chart(object):
             x_axis1 = range(0, len(self.cansat.altitude))
             # x_axis2 = range(0, len(self.cansat.gps_alt))
 
-            print self.cansat.identifier
+            # print self.cansat.identifier
 
             a_altitude.clear()
             a_altitude.plot(x_axis1, self.cansat.altitude, "r", label = "BMP180")
@@ -198,6 +201,36 @@ class Chart(object):
             dataPlot_altitude.get_tk_widget().pack()
 
             self.chart1_frame.after(1000, plot_cts)
+
+        plot_cts()
+
+    def plot_pressure(self):
+        global fig_pressure, dataPlot_pressure, a_pressure
+
+        fig_pressure = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
+        dataPlot_pressure = FigureCanvasTkAgg(fig_pressure, master = self.chart5_frame)
+        a_pressure = fig_pressure.add_subplot(111)
+
+        dataPlot_pressure.show()
+        dataPlot_pressure.get_tk_widget().pack()
+
+        def plot_cts():
+            global a_pressure
+            x_axis1 = range(0, len(self.cansat.pressure))
+            # x_axis2 = range(0, len(self.cansat.gps_alt))
+
+            # print self.cansat.identifier
+
+            a_pressure.clear()
+            a_pressure.plot(x_axis1, self.cansat.pressure, "r", label = "BMP180")
+            # a_altitude.plot(x_axis2, self.cansat.gps_alt, "b", label = "GPS")
+
+            a_pressure.set_title("Pressure (kPa)")
+
+            dataPlot_pressure.show()
+            dataPlot_pressure.get_tk_widget().pack()
+
+            self.chart5_frame.after(1000, plot_cts)
 
         plot_cts()
 
@@ -334,7 +367,7 @@ class TextVar(object):
         self.glider_status.set("Current: " + self.cansat.identifier)
         self.force_status.set("None Selected")
         self.flight_status.set("Flight Status: Not Connected")
-        self.pack_cnt.set("Packet Cnt: %d" % self.cansat.packet_cnt)
+        self.pack_cnt.set("Packet Cnt: %d" % self.cansat.packet_cnt)  # TODO: get two package counts for container and glider
 
         root.after(1000, self.set_text, root)
 

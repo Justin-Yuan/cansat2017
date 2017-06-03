@@ -98,6 +98,7 @@ class Telemetry(object):
             #listbox.insert(0, ["TEST ",data_list])
             print data_list
             if len(data_list) == 8:
+                self.cansat.identifier = "CONTAINER"
                 #listbox.insert(0, ["TEST ",data_list])
                 self.cansat.packet_cnt += 1
                 for i in range(0,8):
@@ -118,6 +119,7 @@ class Telemetry(object):
                 # target.heading.append(float(data_list[7]))
                 self.cansat.flight_status = int(data_list[7][0])
             elif len(data_list) == 10:
+                self.cansat.identifier = "GLIDER"
                 self.cansat.packet_cnt += 1
                 for i in range(0,10):
                     if (data_list[i] == ""):
