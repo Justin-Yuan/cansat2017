@@ -88,7 +88,7 @@ class Telemetry(object):
             self.cansat.flight_status = state
 
         # TO-DO: verify the data_list fields
-        elif self.ser_connected:
+        elif self.ser_connected:   # TODO : target object needs to be fixed 
             data = self.ser.readline()
             data_list = data.split(",")
             #listbox.insert(0, ["TEST ",data_list])
@@ -105,12 +105,12 @@ class Telemetry(object):
                     except:
                         data_list[i] = str(000)
 
-                target.pitot.append(float(data_list[3]))
-                target.altitude.append(float(data_list[4]))
-                target.temp_outside.append(float(data_list[5]))
-                target.voltage.append(float(data_list[6]))
+                self.cansat.pitot.append(float(data_list[3]))
+                self.cansat.altitude.append(float(data_list[4]))
+                self.cansat.temp_outside.append(float(data_list[5]))
+                self.cansat.voltage.append(float(data_list[6]))
                 # target.heading.append(float(data_list[7]))
-                target.state = float(data_list[7])
+                self.cansat.flight_status = float(data_list[7])
 
         root.after(1000, self.serial_update_write, root)
 
