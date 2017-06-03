@@ -48,14 +48,14 @@ if __name__ == "__main__":
     tel = Telemetry(cansat, file_name)
 
     # initialize the main gui
-    root = MainGUI(None, cansat)
+    root = MainGUI(None, cansat, tel)
     root.title('CANSAT - 2017    Team: ' + str(TEAM_NUM))
-
-    # initialize UI elements
-    panel = Panel(root, cansat)
 
     # Text Variables
     text_var = TextVar(root, cansat)
+
+    # initialize UI elements
+    panel = Panel(root, cansat)
 
     # Top info bar
     top_info_frame = TopInfoFrame(root, text_var, TEAM_NUM)
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     root.after(0, cansat.update_identifier, root)
 
     root.after(0, update_mission_time, text_var, root)
-    root.after(0, update_flight_status, tel, text_var, root)
+    root.after(0, update_flight_status, tel, text_var, root, cansat)
     root.after(0, panel.update_panel, root, cansat, text_var)
     root.after(1000, tel.serial_update_write, root)
     root.after(1000, tel.write_to_csv, root)

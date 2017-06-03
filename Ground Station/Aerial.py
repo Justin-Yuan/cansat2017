@@ -56,7 +56,7 @@ class Telemetry(object):
         self.ser_connected = False
         self.cansat = cansat
         # for testing wihtout serial only
-        self.csv_test = True
+        self.csv_test = False
         self.file_name = file_name
 
     def serial_update_write(self, root):
@@ -88,14 +88,14 @@ class Telemetry(object):
             self.cansat.flight_status = state
 
         # TO-DO: verify the data_list fields
-        elif self.ser_connected:   # TODO : target object needs to be fixed 
+        elif self.ser_connected:
             data = self.ser.readline()
             data_list = data.split(",")
             #listbox.insert(0, ["TEST ",data_list])
             print data_list
             if len(data_list) == 8:
                 #listbox.insert(0, ["TEST ",data_list])
-                target.packet_cnt += 1
+                self.cansat.packet_cnt += 1
                 for i in range(0,8):
                     if (data_list[i] == ""):
                         data_list[i] = str(000)
@@ -110,7 +110,7 @@ class Telemetry(object):
                 self.cansat.temp_outside.append(float(data_list[5]))
                 self.cansat.voltage.append(float(data_list[6]))
                 # target.heading.append(float(data_list[7]))
-                self.cansat.flight_status = float(data_list[7])
+                self.cansat.flight_status = int(data_list[7][0])
 
         root.after(1000, self.serial_update_write, root)
 

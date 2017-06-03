@@ -15,20 +15,24 @@ except:
     # for Python3
     import tkinter as Tk
 
+baud_rate = 9600
+
 class MainGUI(Tk.Tk):
-    def __init__(self,parent, cansat):
+    def __init__(self,parent, cansat, tel):
         Tk.Tk.__init__(self,parent)
         self.parent = parent
         self.geometry("1200x800+100+50")
-        self.config(menu=MenuBar(self, cansat))
+        self.config(menu=MenuBar(self, cansat, tel))
 
 
 class MenuBar(Tk.Menu):
     """
     """
-    def __init__(self, parent, cansat):
+    def __init__(self, parent, cansat, tel):
         Tk.Menu.__init__(self, parent)
         self.parent = parent
+        self.tel = tel
+        # self.text_var = text_var
         self.initialize()
         self.cansat = cansat
 
@@ -52,7 +56,7 @@ class MenuBar(Tk.Menu):
                 found_port = True
                 usb_port = str(port)
                 print(usb_port)
-                port_menu.add_command(label=port, command=lambda usb_port=usb_port: self.open_ser(usb_port))
+                port_menu.add_command(label=port, command=lambda usb_port=usb_port: self.open_ser(usb_port, self.tel))
 
         port_menu.add_command(label="Disconnect", command=self.disconnect)
 
@@ -100,16 +104,19 @@ class MenuBar(Tk.Menu):
         sys.exit(0)
 
     def open_ser(self, usb_port, tel):
+        print "trying to connect..."
         address = "/dev/" + usb_port
         try:
             tel.ser = Serial(address, baud_rate, timeout=0, writeTimeout=0)
-            status.set("Connected to %s" % usb_port)
+            # text_var.flight_status.set("Connected to %s" % usb_port)
+            print "Connected to %s" % usb_port
             tel.ser_connected = True
             print("Connected to " + usb_port)
-            flight_status.set("Flight Status: Ready")
+            # flight_status.set("Flight Status: Ready")
         except Exception as e:
             print("Error:connection cannot be established")
-            root.status.set("Error: connection cannot be established. %s" % e)
+            print(e)
+            # root.status.set("Error: connection cannot be established. %s" % e)
 
     def disconnect(self, usb_port, tel):
         tel.ser.close()
