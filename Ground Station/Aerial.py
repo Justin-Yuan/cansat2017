@@ -14,11 +14,6 @@ class Cansat(object):
         self.temp_outside = [0.0]
         self.voltage = [0.0]  # solar power voltage for glider
         self.heading = [0.0]  # glider only
-        self.gps_lat = [0.0]
-        self.gps_long = [0.0]
-        self.gps_alt = [0.0]
-        self.gps_num = 0      # what is this
-        self.gps_speed = [0.0]
         self.flight_status = 0
         self.identifier = "CONTAINER"
 
@@ -60,6 +55,8 @@ class Telemetry(object):
         self.file_name = file_name
 
     def serial_update_write(self, root):
+        print self.ser_connected
+
         # for testing plots without serial connection only, delete this later
         if self.csv_test:
             altitude = randint(1, 400)
@@ -89,6 +86,13 @@ class Telemetry(object):
 
         # TO-DO: verify the data_list fields
         elif self.ser_connected:
+            """ message format
+            container:
+                6159, CONTAINER, time, pct count, altitude, temperature, voltage, state \n
+            glider:
+                6159, GLIDER, pct count, altitude, pressure, speed, temperature, voltage, heading, state \n
+            """
+
             data = self.ser.readline()
             data_list = data.split(",")
             #listbox.insert(0, ["TEST ",data_list])
@@ -105,12 +109,33 @@ class Telemetry(object):
                     except:
                         data_list[i] = str(000)
 
-                self.cansat.pitot.append(float(data_list[3]))
+                self.cansat.pitot.append(0.0)
                 self.cansat.altitude.append(float(data_list[4]))
                 self.cansat.temp_outside.append(float(data_list[5]))
                 self.cansat.voltage.append(float(data_list[6]))
+                self.cansat.pressure.append(0.0)
+                self.cansat.heading.append(0.0)
                 # target.heading.append(float(data_list[7]))
                 self.cansat.flight_status = int(data_list[7][0])
+            elif len(data_list) == 10:
+                self.cansat.packet_cnt += 1
+                for i in range(0,10):
+                    if (data_list[i] == ""):
+                        data_list[i] = str(000)
+
+                    try:
+                        float(data_list[i])
+                    except:
+                        data_list[i] = str(000)
+
+                self.cansat.pitot.append(float(data_list[5]))
+                self.cansat.altitude.append(float(data_list[3]))
+                self.cansat.temp_outside.append(float(data_list[6]))
+                self.cansat.voltage.append(float(data_list[7]))
+                self.cansat.pressure.append(float(data_list[4]))
+                self.cansat.heading.append(float(data_list[8]))
+                # target.heading.append(float(data_list[7]))
+                self.cansat.flight_status = int(data_list[9][0])
 
         root.after(1000, self.serial_update_write, root)
 

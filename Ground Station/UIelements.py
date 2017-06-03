@@ -182,13 +182,13 @@ class Chart(object):
         def plot_cts():
             global a_altitude
             x_axis1 = range(0, len(self.cansat.altitude))
-            x_axis2 = range(0, len(self.cansat.gps_alt))
+            # x_axis2 = range(0, len(self.cansat.gps_alt))
 
             print self.cansat.identifier
 
             a_altitude.clear()
             a_altitude.plot(x_axis1, self.cansat.altitude, "r", label = "BMP180")
-            a_altitude.plot(x_axis2, self.cansat.gps_alt, "b", label = "GPS")
+            # a_altitude.plot(x_axis2, self.cansat.gps_alt, "b", label = "GPS")
 
 
             a_altitude.set_title("Altitude (m)")
@@ -276,11 +276,11 @@ class Chart(object):
             global a_pitot
             target = self.cansat
             x_axis1 = range(0, len(target.pitot))
-            x_axis2 = range(0, len(target.gps_speed))
+            # x_axis2 = range(0, len(target.gps_speed))
 
             a_pitot.clear()
             a_pitot.plot(x_axis1, target.pitot, "r", label = "Pitot")
-            a_pitot.plot(x_axis2, target.gps_speed, "b", label = "GPS")
+            # a_pitot.plot(x_axis2, target.gps_speed, "b", label = "GPS")
 
             a_pitot.set_title("Speed (m/s)")
             a_pitot.set_ylim([-10, 100])
@@ -306,9 +306,9 @@ class Panel(Tk.Frame):
     def update_panel(self, root, target, text_var):
         text_var.pack_cnt.set("Packet Cnt: %d" % target.packet_cnt)
         text_var.pressure_var.set("Atm Pressure %.1f kPa" % target.pressure[-1])
-        text_var.gps_lat.set("GPS Latitude: %.4f" % target.gps_lat[-1])
-        text_var.gps_long.set("GPS Longitude: %.4f" % target.gps_long[-1])
-        text_var.gps_num.set("GPS # Sat: %d" % target.gps_num)
+        # text_var.gps_lat.set("GPS Latitude: %.4f" % target.gps_lat[-1])
+        # text_var.gps_long.set("GPS Longitude: %.4f" % target.gps_long[-1])
+        # text_var.gps_num.set("GPS # Sat: %d" % target.gps_num)
 
         root.after(1000, self.update_panel, root, target, text_var)
 
