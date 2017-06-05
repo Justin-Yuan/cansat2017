@@ -84,6 +84,7 @@ if __name__ == "__main__":
     root.after(0, chart.plot_voltage)
     root.after(0, chart.plot_pitot)
     root.after(0, chart.plot_heading)
+    root.after(0, chart.plot_position)
     root.after(0, cansat.update_identifier, root)
 
     root.after(0, update_mission_time, text_var, root)

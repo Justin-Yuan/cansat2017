@@ -149,12 +149,14 @@ class Chart(object):
     def __init__(self, parent, cansat):
         self.cansat = cansat
         self.frame = Tk.Frame(parent)
+        self.frame2 = Tk.Frame(parent)
         self.chart1_frame = Tk.Frame(self.frame)
         self.chart2_frame = Tk.Frame(self.frame)
         self.chart3_frame = Tk.Frame(self.frame)
         self.chart4_frame = Tk.Frame(self.frame)
-        self.chart5_frame = Tk.Frame(self.frame)
-        self.chart6_frame = Tk.Frame(self.frame)
+        self.chart5_frame = Tk.Frame(self.frame2)
+        self.chart6_frame = Tk.Frame(self.frame2)
+        self.chart7_frame = Tk.Frame(self.frame2)
 
         self.pack_frame()
 
@@ -167,8 +169,13 @@ class Chart(object):
         self.chart2_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart3_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart4_frame.pack(side = "left", expand = 1, fill = 'both')
+
+        self.frame2.pack(expand = 1, fill='x')
+        self.frame.bind("<Key>", self.key)
+
         self.chart5_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart6_frame.pack(side = "left", expand = 1, fill = 'both')
+        self.chart7_frame.pack(side = "left", expand = 1, fill = 'both')
 
 
     def key(self, event):
@@ -359,6 +366,35 @@ class Chart(object):
 
         plot_cts()
 
+    def plot_position(self):
+        # global root
+        # root = tk.Tk()
+        global fig_position, dataPlot_position, a_position
+
+        fig_position = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
+        dataPlot_position = FigureCanvasTkAgg(fig_position, master = self.chart7_frame)
+        a_position = fig_position.add_subplot(111)
+
+        dataPlot_position.show()
+        dataPlot_position.get_tk_widget().pack()
+
+        def plot_cts():
+            global a_position
+            # x_axis = range(0, len(self.cansat.pos_x))
+
+            a_position.clear()
+            a_position.plot(self.cansat.pos_x, self.cansat.pos_y, "r", label = "2D_position")
+
+            a_position.set_title("2D Position")
+            # a_position.set_ylim([0, 60])
+
+            dataPlot_position.show()
+            dataPlot_position.get_tk_widget().pack()
+
+            self.chart7_frame.after(1000, plot_cts)
+
+        plot_cts()
+
 
 class Panel(Tk.Frame):
     """ Panel for showing current data
@@ -385,17 +421,27 @@ class TextVar(object):
     def __init__(self, root, cansat):
         self.mission_time = Tk.StringVar()
         self.telemetry_time = Tk.StringVar()
+
         self.force_status = Tk.StringVar()
         self.flight_status = Tk.StringVar()
         self.pack_cnt = Tk.StringVar()
         self.packet_cnt_glider = Tk.StringVar()
+
+        self.altitude_var = Tk.StringVar()
+        self.temperature_var = Tk.StringVar()
         self.pressure_var = Tk.StringVar()
+        self.voltage_var = Tk.StringVar()
+        self.speed_var = Tk.StringVar()
+        self.heading_var = Tk.StringVar()
+
+        self.pos_x_var = Tk.StringVar()
+        self.pos_y_var = Tk.StringVar()
 
         # not in use
         self.gps_lat = Tk.StringVar()
         self.gps_long = Tk.StringVar()
         self.gps_num = Tk.StringVar()
-        self.glider_status = Tk.StringVar
+        self.glider_status = Tk.StringVar()
         # not in use
 
         self.cansat = cansat
@@ -406,8 +452,18 @@ class TextVar(object):
         self.glider_status.set("Current: " + self.cansat.identifier)
         self.force_status.set("None Selected")
         self.flight_status.set("Flight Status: Not Connected")
+
         self.pack_cnt.set("Packet Cnt: %d" % self.cansat.packet_cnt)
         self.packet_cnt_glider.set("Glider Packet Cnt: %d" % self.cansat.packet_cnt_glider)
+        self.altitude_var.set("Altitude: %g (m)" % self.cansat.altitude[-1])
+        self.temperature_var.set("Temperature: %g (C)" % self.cansat.temp_outside[-1])
+        self.pressure_var.set("Pressure: %g (kPa)" % self.cansat.pressure[-1])
+        self.voltage_var.set("Voltage: %g (V)" % self.cansat.voltage[-1])
+        self.speed_var.set("Speed: %g (m/s)" % self.cansat.pitot[-1])
+        self.heading_var.set("Heading: %g (deg)" % self.cansat.heading[-1])
+
+        self.pos_x_var.set("X: %g" % self.cansat.pos_x[-1])
+        self.pos_y_var.set("Y: %g" % self.cansat.pos_y[-1])
 
         root.after(1000, self.set_text, root)
 
@@ -436,10 +492,19 @@ class LeftInfoFrame(Tk.Frame):
     """
     def __init__(self, parent, text_var):
         self.info_frame = Tk.Frame(parent)
-        self.label_info6 = Tk.Label(self.info_frame, textvariable = text_var.telemetry_time)
-        self.label_info0 = Tk.Label(self.info_frame, textvariable = text_var.pack_cnt)
-        self.label_info5 = Tk.Label(self.info_frame, textvariable= text_var.packet_cnt_glider)
-        self.label_info4 = Tk.Label(self.info_frame, textvariable = text_var.pressure_var)
+        self.label_info0 = Tk.Label(self.info_frame, textvariable = text_var.telemetry_time)
+        self.label_info1 = Tk.Label(self.info_frame, textvariable = text_var.pack_cnt)
+        self.label_info2 = Tk.Label(self.info_frame, textvariable= text_var.packet_cnt_glider)
+        self.label_info3 = Tk.Label(self.info_frame, textvariable = text_var.altitude_var)
+        self.label_info4 = Tk.Label(self.info_frame, textvariable = text_var.temperature_var)
+        self.label_info5 = Tk.Label(self.info_frame, textvariable = text_var.pressure_var)
+        self.label_info6 = Tk.Label(self.info_frame, textvariable= text_var.voltage_var)
+        self.label_info7 = Tk.Label(self.info_frame, textvariable = text_var.speed_var)
+        self.label_info8 = Tk.Label(self.info_frame, textvariable = text_var.heading_var)
+
+        self.label_info9 = Tk.Label(self.info_frame, textvariable = text_var.pos_x_var)
+        self.label_info10 = Tk.Label(self.info_frame, textvariable = text_var.pos_y_var)
+
         # self.label_info1 = Tk.Label(self.info_frame, textvariable = text_var.gps_lat)
         # self.label_info2 = Tk.Label(self.info_frame, textvariable = text_var.gps_long)
         # self.label_info3 = Tk.Label(self.info_frame, textvariable = text_var.gps_num)
@@ -448,10 +513,19 @@ class LeftInfoFrame(Tk.Frame):
 
     def pack_frame(self):
         self.info_frame.pack(side = "top",expand = 1,  fill = 'both')
-        self.label_info6.grid(column = 0, row = 0, sticky = 'w')
-        self.label_info0.grid(column = 0, row = 1,sticky = 'w')
-        self.label_info5.grid(column = 0, row = 2,sticky = 'w')
-        self.label_info4.grid(column = 0, row = 3, sticky = 'w')
+        self.label_info0.grid(column = 0, row = 0, sticky = 'w')
+        self.label_info1.grid(column = 0, row = 1,sticky = 'w')
+        self.label_info2.grid(column = 0, row = 2,sticky = 'w')
+        self.label_info3.grid(column = 0, row = 3, sticky = 'w')
+        self.label_info4.grid(column = 0, row = 4, sticky = 'w')
+        self.label_info5.grid(column = 0, row = 5,sticky = 'w')
+        self.label_info6.grid(column = 0, row = 6,sticky = 'w')
+        self.label_info7.grid(column = 0, row = 7, sticky = 'w')
+        self.label_info8.grid(column = 0, row = 8, sticky = 'w')
+
+        self.label_info9.grid(column = 0, row = 9, sticky = 'w')
+        self.label_info10.grid(column = 0, row = 10, sticky = 'w')
+
         # self.label_info1.grid(column = 0, row = 2,sticky = 'w')
         # self.label_info2.grid(column = 0, row = 3,sticky = 'w')
         # self.label_info3.grid(column = 0, row = 4,sticky = 'w')

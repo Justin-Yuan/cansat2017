@@ -11,7 +11,7 @@ def update_mission_time(text_var, root):
 	root.after(1000, update_mission_time, text_var, root)
 
 def update_telemetry_time(text_var, root, cansat):
-	text_var.telemetry_time.set("Telemetry Time: %s" % cansat.telemetry_time)
+	text_var.telemetry_time.set("Telemetry Time: %d" % cansat.telemetry_time)
 	root.after(1000, update_telemetry_time, text_var, root, cansat)
 
 def update_flight_status(tel, text_var, root, cansat):
