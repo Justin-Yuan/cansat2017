@@ -39,8 +39,8 @@ class MenuBar(Tk.Menu):
     def initialize(self):
         # File menu
         self.file_menu = Tk.Menu(self, tearoff=0)
-        self.file_menu.add_command(label="Save", command=self.save_data)
-        self.file_menu.add_separator()
+        # self.file_menu.add_command(label="Save", command=self.save_data)
+        # self.file_menu.add_separator()
         self.file_menu.add_command(label="Start", command=self.start_operation)
         self.file_menu.add_command(label="Pause", command=self.pause_operation)
         self.file_menu.add_command(label="Stop", command=self.stop_operation)
@@ -71,24 +71,7 @@ class MenuBar(Tk.Menu):
         self.add_cascade(label="Help", menu=help_menu)
 
     def save_data(self):
-
-        FILEOPENOPTIONS = dict(defaultextension='.csv', filetypes=[('CSV file','*.csv')])
-        with asksaveasfile(mode = "w+", **FILEOPENOPTIONS) as csvfile:
-            header = ["6159","GLIDER","MISSION_TIME","PACKET_CNT","ALTITUDE","PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
-            writer = csv.DictWriter(csvfile, fieldnames=header)
-            writer.writeheader()
-            for i in range(self.cansat.packet_cnt):
-                writer.writerow({"6159":6159,
-                                "GLIDER": self.cansat.identifier,
-                                "MISSION_TIME":self.cansat.mission_time[i],
-                                "PACKET_CNT":i,
-                                "ALTITUDE":self.cansat.altitude[i],
-                                "PRESSURE":self.cansat.pressure[i],
-                                "SPEED":self.cansat.pitot[i],
-                                "TEMP": self.cansat.temp_outside[i],
-                                "VOLTAGE": self.cansat.voltage[i],
-                                "HEADING": self.cansat.heading[i],
-                                "SOFTWARE_STATE": self.data.flight_status[i]})
+        pass
 
 
     def start_operation(self):

@@ -29,6 +29,11 @@ class Cansat(object):
         self.pos_x = [0.0]
         self.pos_y = [0.0]
 
+        # for packet count fallback
+        self.packet_cnt_store = 0
+        self.packet_cnt_glider_store = 0
+        self.missed_packet = False
+        self.missed_packet_glider = False
 
     def update_identifier(self, root):
         if self.flight_status == 3  \
@@ -123,7 +128,11 @@ class Telemetry(object):
             if len(data_list) == 8:
                 self.cansat.identifier = "CONTAINER"
                 #listbox.insert(0, ["TEST ",data_list])
-                self.cansat.packet_cnt += 1
+                # TODO: telemetry packet cnt
+                if int(data_list[index]) != self.cansat.packet_cnt + 1:
+                    self.cansat.packet_cnt_store = self.cansat.packet_cnt
+                    self.cansat.missed_packet = True
+                self.cansat.packet_cnt = int(data_list[index]) + self.cansat.packet_cnt_store
                 for i in range(0,8):
                     if (data_list[i] == ""):
                         data_list[i] = str(000)
@@ -145,7 +154,11 @@ class Telemetry(object):
                 self.cansat.pos_y.append(0.0)
             elif len(data_list) == 10:
                 self.cansat.identifier = "GLIDER"
-                self.cansat.packet_cnt_glider += 1
+                # TODO: telemetry packet cnt index
+                if int(data_list[index]) != self.cansat.packet_cnt_glider + 1:
+                    self.cansat.glider_packet_cnt_store = self.cansat.packet_cnt_glider
+                    self.cansat.missed_packet_glider = True
+                self.cansat.packet_cnt_glider = self.cansat.packet_cnt_glider + self.cansat.glider_packet_cnt_store 
                 for i in range(0,10):
                     if (data_list[i] == ""):
                         data_list[i] = str(000)
@@ -161,7 +174,7 @@ class Telemetry(object):
                 self.cansat.voltage.append(float(data_list[7]))
                 self.cansat.pressure.append(float(data_list[4]))
                 self.cansat.heading.append(float(data_list[8]))
-                # target.heading.append(float(data_list[7]))
+
                 if self.switch:
                     self.switch = False
                     self.cansat.telemetry_time += 3
