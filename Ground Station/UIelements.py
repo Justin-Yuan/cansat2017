@@ -154,6 +154,7 @@ class Chart(object):
         self.chart3_frame = Tk.Frame(self.frame)
         self.chart4_frame = Tk.Frame(self.frame)
         self.chart5_frame = Tk.Frame(self.frame)
+        self.chart6_frame = Tk.Frame(self.frame)
 
         self.pack_frame()
 
@@ -167,6 +168,7 @@ class Chart(object):
         self.chart3_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart4_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart5_frame.pack(side = "left", expand = 1, fill = 'both')
+        self.chart6_frame.pack(side = "left", expand = 1, fill = 'both')
 
 
     def key(self, event):
@@ -208,7 +210,7 @@ class Chart(object):
         global fig_pressure, dataPlot_pressure, a_pressure
 
         fig_pressure = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
-        dataPlot_pressure = FigureCanvasTkAgg(fig_pressure, master = self.chart5_frame)
+        dataPlot_pressure = FigureCanvasTkAgg(fig_pressure, master = self.chart3_frame)
         a_pressure = fig_pressure.add_subplot(111)
 
         dataPlot_pressure.show()
@@ -230,7 +232,7 @@ class Chart(object):
             dataPlot_pressure.show()
             dataPlot_pressure.get_tk_widget().pack()
 
-            self.chart5_frame.after(1000, plot_cts)
+            self.chart3_frame.after(1000, plot_cts)
 
         plot_cts()
 
@@ -291,7 +293,7 @@ class Chart(object):
             dataPlot_voltage.show()
             dataPlot_voltage.get_tk_widget().pack()
 
-            self.chart3_frame.after(1000, plot_cts)
+            self.chart4_frame.after(1000, plot_cts)
 
         plot_cts()
 
@@ -299,7 +301,7 @@ class Chart(object):
         global fig_pitot, dataPlot_pitot, a_pitot
 
         fig_pitot = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
-        dataPlot_pitot = FigureCanvasTkAgg(fig_pitot, master = self.chart3_frame)
+        dataPlot_pitot = FigureCanvasTkAgg(fig_pitot, master = self.chart5_frame)
 
         a_pitot = fig_pitot.add_subplot(111)
         dataPlot_pitot.show()
@@ -322,7 +324,38 @@ class Chart(object):
             dataPlot_pitot.show()
             dataPlot_pitot.get_tk_widget().pack()
 
-            self.chart4_frame.after(1000, plot_cts)
+            self.chart5_frame.after(1000, plot_cts)
+
+        plot_cts()
+
+    def plot_heading(self):
+        global fig_heading, dataPlot_heading, a_heading
+
+        fig_heading = Figure(figsize=(4, 4), dpi = (self.frame.winfo_width() - 50) / 16)
+        dataPlot_heading = FigureCanvasTkAgg(fig_heading, master = self.chart6_frame)
+
+        a_heading = fig_heading.add_subplot(111)
+        dataPlot_heading.show()
+        dataPlot_heading.get_tk_widget().pack()
+
+        def plot_cts():
+            global a_heading
+            target = self.cansat
+            x_axis1 = range(0, len(target.heading))
+            # x_axis2 = range(0, len(target.gps_speed))
+
+            a_heading.clear()
+            a_heading.plot(x_axis1, target.heading, "r", label = "Heading")
+            # a_pitot.plot(x_axis2, target.gps_speed, "b", label = "GPS")
+
+            a_heading.set_title("Heading (degree)")
+            a_heading.set_ylim([-10, 100])
+            legend = a_heading.legend(loc='upper left', shadow=True)
+
+            dataPlot_heading.show()
+            dataPlot_heading.get_tk_widget().pack()
+
+            self.chart6_frame.after(1000, plot_cts)
 
         plot_cts()
 
@@ -357,10 +390,13 @@ class TextVar(object):
         self.pack_cnt = Tk.StringVar()
         self.packet_cnt_glider = Tk.StringVar()
         self.pressure_var = Tk.StringVar()
+
+        # not in use
         self.gps_lat = Tk.StringVar()
         self.gps_long = Tk.StringVar()
         self.gps_num = Tk.StringVar()
-        self.glider_status = Tk.StringVar()
+        self.glider_status = Tk.StringVar
+        # not in use
 
         self.cansat = cansat
         self.set_text(root)
@@ -426,9 +462,11 @@ class ForceFrame(Tk.Frame):
     """
     def __init__(self, parent, text_var, force_status_var, telemetry):
         self.force_status_var = force_status_var
-        self.status_button_frame = Tk.Frame(parent, bg = 'red')
         self.tel = telemetry
+
+        self.status_button_frame = Tk.Frame(parent, bg = 'red')
         self.force_status = text_var.force_status
+
         self.label_force = Tk.Label(self.status_button_frame, text = "FORCE ACTIONS",bg = 'red')
         self.button_none = Tk.Button(self.status_button_frame,text=u"None",command = lambda x=0: self.force_status_callback(x))
         self.button_deploy = Tk.Button(self.status_button_frame,text=u"Deploy",command = lambda x=1: self.force_status_callback(x))

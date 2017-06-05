@@ -55,8 +55,9 @@ class Telemetry(object):
         # for testing wihtout serial only
         self.csv_test = False
         self.file_name = file_name
+        # self.telemetry_box = telemetry_box
 
-    def serial_update_write(self, root):
+    def serial_update_write(self, root, telemetry_box):
         print self.ser_connected
 
         # for testing plots without serial connection only, delete this later
@@ -97,6 +98,7 @@ class Telemetry(object):
 
             data = self.ser.readline()
             data_list = data.split(",")
+            telemetry_box.listbox.insert(0, data)
             #listbox.insert(0, ["TEST ",data_list])
             print data_list
             if len(data_list) == 8:
@@ -142,7 +144,7 @@ class Telemetry(object):
                 # target.heading.append(float(data_list[7]))
                 self.cansat.flight_status = int(data_list[9][0])
 
-        root.after(1000, self.serial_update_write, root)
+        root.after(1000, self.serial_update_write, root, telemetry_box)
 
     def write_to_csv(self, root): # writes in parallel with the serial update
         with open(self.file_name, 'aw+') as csvfile:

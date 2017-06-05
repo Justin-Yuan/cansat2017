@@ -80,16 +80,17 @@ if __name__ == "__main__":
      # call loops
     root.after(0, chart.plot_altitude)
     root.after(0, chart.plot_temperature)
-    root.after(0, chart.plot_pitot)
-    root.after(0, chart.plot_voltage)
     root.after(0, chart.plot_pressure)
+    root.after(0, chart.plot_voltage)
+    root.after(0, chart.plot_pitot)
+    root.after(0, chart.plot_heading)
     root.after(0, cansat.update_identifier, root)
 
     root.after(0, update_mission_time, text_var, root)
     root.after(0, update_telemetry_time, text_var, root, cansat)
     root.after(0, update_flight_status, tel, text_var, root, cansat)
     root.after(0, panel.update_panel, root, cansat, text_var)
-    root.after(1000, tel.serial_update_write, root)
+    root.after(1000, tel.serial_update_write, root, telemetry_box)
     root.after(1000, tel.write_to_csv, root)
     root.after(1000, conclude, chart)
 
