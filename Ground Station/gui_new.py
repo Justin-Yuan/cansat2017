@@ -86,6 +86,7 @@ if __name__ == "__main__":
     root.after(0, cansat.update_identifier, root)
 
     root.after(0, update_mission_time, text_var, root)
+    root.after(0, update_telemetry_time, text_var, root, cansat)
     root.after(0, update_flight_status, tel, text_var, root, cansat)
     root.after(0, panel.update_panel, root, cansat, text_var)
     root.after(1000, tel.serial_update_write, root)

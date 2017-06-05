@@ -7,8 +7,10 @@ class Cansat(object):
     """
     def __init__(self):
         self.packet_cnt = 0
+        self.packet_cnt_glider = 0
         self.altitude = [0.0]
         self.mission_time = str(datetime.datetime.now())[14:19]
+        self.telemetry_time = ""
         self.pressure = [0.0] # glider only
         self.pitot = [0.0]
         self.temp_outside = [0.0]
@@ -117,10 +119,11 @@ class Telemetry(object):
                 self.cansat.pressure.append(0.0)
                 self.cansat.heading.append(0.0)
                 # target.heading.append(float(data_list[7]))
+                self.cansat.telemetry_time = data_list[2]
                 self.cansat.flight_status = int(data_list[7][0])
             elif len(data_list) == 10:
                 self.cansat.identifier = "GLIDER"
-                self.cansat.packet_cnt += 1
+                self.cansat.packet_cnt_glider += 1
                 for i in range(0,10):
                     if (data_list[i] == ""):
                         data_list[i] = str(000)

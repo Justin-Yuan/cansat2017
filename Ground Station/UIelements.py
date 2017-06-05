@@ -351,14 +351,17 @@ class TextVar(object):
     """
     def __init__(self, root, cansat):
         self.mission_time = Tk.StringVar()
+        self.telemetry_time = Tk.StringVar()
         self.force_status = Tk.StringVar()
         self.flight_status = Tk.StringVar()
         self.pack_cnt = Tk.StringVar()
+        self.packet_cnt_glider = Tk.StringVar()
         self.pressure_var = Tk.StringVar()
         self.gps_lat = Tk.StringVar()
         self.gps_long = Tk.StringVar()
         self.gps_num = Tk.StringVar()
         self.glider_status = Tk.StringVar()
+
         self.cansat = cansat
         self.set_text(root)
 
@@ -367,7 +370,8 @@ class TextVar(object):
         self.glider_status.set("Current: " + self.cansat.identifier)
         self.force_status.set("None Selected")
         self.flight_status.set("Flight Status: Not Connected")
-        self.pack_cnt.set("Packet Cnt: %d" % self.cansat.packet_cnt)  # TODO: get two package counts for container and glider
+        self.pack_cnt.set("Packet Cnt: %d" % self.cansat.packet_cnt)
+        self.packet_cnt_glider.set("Glider Packet Cnt: %d" % self.cansat.packet_cnt_glider)
 
         root.after(1000, self.set_text, root)
 
@@ -396,21 +400,25 @@ class LeftInfoFrame(Tk.Frame):
     """
     def __init__(self, parent, text_var):
         self.info_frame = Tk.Frame(parent)
+        self.label_info6 = Tk.Label(self.info_frame, textvariable = text_var.telemetry_time)
         self.label_info0 = Tk.Label(self.info_frame, textvariable = text_var.pack_cnt)
+        self.label_info5 = Tk.Label(self.info_frame, textvariable= text_var.packet_cnt_glider)
         self.label_info4 = Tk.Label(self.info_frame, textvariable = text_var.pressure_var)
-        self.label_info1 = Tk.Label(self.info_frame, textvariable = text_var.gps_lat)
-        self.label_info2 = Tk.Label(self.info_frame, textvariable = text_var.gps_long)
-        self.label_info3 = Tk.Label(self.info_frame, textvariable = text_var.gps_num)
+        # self.label_info1 = Tk.Label(self.info_frame, textvariable = text_var.gps_lat)
+        # self.label_info2 = Tk.Label(self.info_frame, textvariable = text_var.gps_long)
+        # self.label_info3 = Tk.Label(self.info_frame, textvariable = text_var.gps_num)
 
         self.pack_frame()
 
     def pack_frame(self):
         self.info_frame.pack(side = "top",expand = 1,  fill = 'both')
-        self.label_info0.grid(column = 0, row = 0,sticky = 'w')
-        self.label_info4.grid(column = 0, row = 1,sticky = 'w')
-        self.label_info1.grid(column = 0, row = 2,sticky = 'w')
-        self.label_info2.grid(column = 0, row = 3,sticky = 'w')
-        self.label_info3.grid(column = 0, row = 4,sticky = 'w')
+        self.label_info6.grid(column = 0, row = 0, sticky = 'w')
+        self.label_info0.grid(column = 0, row = 1,sticky = 'w')
+        self.label_info5.grid(column = 0, row = 2,sticky = 'w')
+        self.label_info4.grid(column = 0, row = 3, sticky = 'w')
+        # self.label_info1.grid(column = 0, row = 2,sticky = 'w')
+        # self.label_info2.grid(column = 0, row = 3,sticky = 'w')
+        # self.label_info3.grid(column = 0, row = 4,sticky = 'w')
 
 
 class ForceFrame(Tk.Frame):

@@ -10,6 +10,10 @@ def update_mission_time(text_var, root):
 	text_var.mission_time.set("Mission Time: %s" % current_time)
 	root.after(1000, update_mission_time, text_var, root)
 
+def update_telemetry_time(text_var, root, cansat):
+	text_var.telemetry_time.set("Telemetry Time: %s" % cansat.telemetry_time)
+	root.after(1000, update_telemetry_time, text_var, root, cansat)
+
 def update_flight_status(tel, text_var, root, cansat):
 	if tel.ser_connected == True:
 		text_var.flight_status.set("Flight Status: " + flight_status_dict[cansat.flight_status])
