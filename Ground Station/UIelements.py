@@ -433,8 +433,8 @@ class TextVar(object):
 
     def set_text(self, root):
         self.glider_status.set("Current: " + self.cansat.identifier)
-        self.force_status.set("None Selected")
-        self.flight_status.set("Flight Status: Not Connected")
+        # self.force_status.set("None Selected")
+        # self.flight_status.set("Flight Status: Not Connected")
 
         self.pack_cnt.set("Packet Cnt: %d" % self.cansat.packet_cnt)
         self.packet_cnt_glider.set("Glider Packet Cnt: %d" % self.cansat.packet_cnt_glider)
@@ -523,13 +523,14 @@ class ForceFrame(Tk.Frame):
 
         self.status_button_frame = Tk.Frame(parent, bg = 'red')
         self.force_status = text_var.force_status
+        self.force_status.set("None Selected")
 
         self.label_force = Tk.Label(self.status_button_frame, text = "FORCE ACTIONS",bg = 'red')
         self.button_none = Tk.Button(self.status_button_frame,text=u"None",command = lambda x=0: self.force_status_callback(x))
         self.button_deploy = Tk.Button(self.status_button_frame,text=u"Deploy",command = lambda x=1: self.force_status_callback(x))
         self.button_land = Tk.Button(self.status_button_frame,text=u"Land",command = lambda x=2: self.force_status_callback(x))
-        self.label_force_status = Tk.Label(self.status_button_frame, textvariable = self.force_status ,pady=12, bg = 'red')
-        self.button_act = Tk.Button(self.status_button_frame, text = "Execute",command = self.execute_button_callback())
+        self.label_force_status = Tk.Label(self.status_button_frame, textvariable=self.force_status, pady=12, bg = 'red')
+        self.button_act = Tk.Button(self.status_button_frame, text = "Execute",command = self.execute_button_callback)
 
         self.pack_frame()
 
@@ -541,6 +542,7 @@ class ForceFrame(Tk.Frame):
         self.button_land.pack(side = 'top')
         self.label_force_status.pack(side = 'top',fill = 'x')
         self.button_act.pack(side = 'top')
+
 
 # TODO status and force_status variables
     def force_status_callback(self, status):
@@ -556,17 +558,20 @@ class ForceFrame(Tk.Frame):
 
 # TODO ser_connected variable and ser variable
     def execute_button_callback(self):
-        try:
-            if self.tel.ser_connected == 1:
-                if force_status_var == 1 or force_status_var == 2:
-                    self.tel.ser.write('f %d\n' % force_status_var)
-                    print 'force command sent with %d' % force_status_var
-                else:
-                    print 'Nothing was executed'
-        except Exception as e:
-            print "Error: Could not write to serial"
-            # ????
-            self.force_status.set("Error: Could not write to serial. %s" % e)
+        if self.tel.ser_connected == 0:
+            print "Force Status:", self.force_status.get()
+            if self.force_status_var == 1 or self.force_status_var == 2:
+                print 'sending force command...'
+                try:
+                    self.tel.ser.write('f %d\n' % self.force_status_var)
+                except Exception as e:
+                    print "Error: Could not write to serial"
+                    # ????
+                    self.force_status.set("Error: Could not write to serial. %s" % e)
+                print 'force command sent with %d' % self.force_status_var
+            else:
+                print 'Nothing was executed'
+
 
 
 class TelemetryBox(Tk.Frame):
