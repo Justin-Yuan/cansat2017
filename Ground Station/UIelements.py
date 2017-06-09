@@ -566,6 +566,7 @@ class ForceFrame(Tk.Frame):
                 try:
                     msg = ("f %d\n" % self.force_status_var).encode('utf-8')
                     # self.tel.ser.write(msg.encode())
+
                     self.tel.ser.write(msg)
                     print "sent..." + msg
                 except Exception as e:
