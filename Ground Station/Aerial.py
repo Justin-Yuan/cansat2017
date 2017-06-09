@@ -12,6 +12,7 @@ class Cansat(object):
         self.altitude = [0.0]
         self.mission_time = str(datetime.datetime.now())[14:19]
         self.telemetry_time = 0
+        self.bg_time = 0    # background time
         self.pressure = [0.0] # glider only
         self.pitot = [0.0]
         self.temp_outside = [0.0]
@@ -19,6 +20,7 @@ class Cansat(object):
         self.heading = [0.0]  # glider only
         self.flight_status = 0
         self.identifier = "CONTAINER"
+        self.switch = True
 
         # for 2D plot
         self.start_time = 0
@@ -67,8 +69,10 @@ class Telemetry(object):
         self.cansat = cansat
         # for testing wihtout serial only
         self.csv_test = False
-        self.switch = True
+        # self.switch = True
         self.file_name = file_name
+
+
         # self.telemetry_box = telemetry_box
 
     def find_position_change(self, time, speed, degree):
@@ -156,13 +160,13 @@ class Telemetry(object):
             elif len(data_list) == 10:
                 self.cansat.identifier = "GLIDER"
                 # TODO: telemetry packet cnt index
-                if int(data_list[2]) + self.cansat.glider_packet_cnt_store \
+                if int(data_list[2]) + self.cansat.packet_cnt_glider_store \
                 < self.cansat.packet_cnt_glider + 1:
-                    self.cansat.glider_packet_cnt_store = self.cansat.packet_cnt_glider
+                    self.cansat.packet_cnt_glider_store = self.cansat.packet_cnt_glider
                     print "packet count mismatch"
                 elif int(data_list[2]) > self.cansat.packet_cnt_glider + 1:
                     print "missed packet"
-                self.cansat.packet_cnt_glider = int(data_list[2]) + self.cansat.glider_packet_cnt_store
+                self.cansat.packet_cnt_glider = int(data_list[2]) + self.cansat.packet_cnt_glider_store
                 # self.cansat.packet_cnt_glider += 1
                 for i in range(0,10):
                     if (data_list[i] == ""):
@@ -180,11 +184,11 @@ class Telemetry(object):
                 self.cansat.pressure.append(float(data_list[4]))
                 self.cansat.heading.append(float(data_list[8]))
 
-                if self.switch:
-                    self.switch = False
-                    self.cansat.telemetry_time += 3
+                if self.cansat.switch:
+                    self.cansat.switch = False
+                    # self.cansat.telemetry_time += 3
 
-                    self.start_time = self.cansat.telemetry_time
+                    # self.start_time = self.cansat.telemetry_time
                     self.cansat.pos_x.append(0.0)
                     self.cansat.pos_y.append(0.0)
                 else:
@@ -209,7 +213,7 @@ class Telemetry(object):
             writer.writerow({"6159":6159,
                             "OBJECT": self.cansat.identifier,
                             "MISSION_TIME":self.cansat.telemetry_time, #self.cansat.mission_time,
-                            "PACKET_CNT": self.cansat.packet_cnt,
+                            "PACKET_CNT": self.cansat.packet_cnt + self.cansat.packet_cnt_glider,
                             "ALTITUDE":self.cansat.altitude[-1],
                             "PRESSURE":self.cansat.pressure[-1],
                             "SPEED":self.cansat.pitot[-1],
