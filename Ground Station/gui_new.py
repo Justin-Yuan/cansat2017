@@ -22,7 +22,7 @@ except:
 # team information
 TEAM_NUM = 6159
 baud_rate = 9600
-file_name = "CANSAT2017_TLM_6159_<TEAM_NAME>.csv"
+file_name = "CANSAT2017_TLM_6159_RSX_Cansat.csv"
 
 # Vars
 force_status_var = 0

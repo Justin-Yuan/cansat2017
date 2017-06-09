@@ -32,8 +32,6 @@ class Cansat(object):
         # for packet count fallback
         self.packet_cnt_store = 0
         self.packet_cnt_glider_store = 0
-        self.missed_packet = False
-        self.missed_packet_glider = False
 
     def update_identifier(self, root):
         if self.flight_status == 3  \
@@ -129,10 +127,12 @@ class Telemetry(object):
                 self.cansat.identifier = "CONTAINER"
                 #listbox.insert(0, ["TEST ",data_list])
                 # TODO: telemetry packet cnt
-                if int(data_list[3]) != self.cansat.packet_cnt + 1:
+                if int(data_list[3]) + self.cansat.packet_cnt_store < self.cansat.packet_cnt + 1:
                     self.cansat.packet_cnt_store = self.cansat.packet_cnt
-                    self.cansat.missed_packet = True
-                self.cansat.packet_cnt = int(data_list[index]) + self.cansat.packet_cnt_store
+                    print "packet count mismatch"
+                elif int(data_list[3]) > self.cansat.packet_cnt + 1:
+                    print "missed packet"
+                self.cansat.packet_cnt = int(data_list[3]) + self.cansat.packet_cnt_store
                 # self.cansat.packet_cnt += 1
                 for i in range(0,8):
                     if (data_list[i] == ""):
@@ -156,10 +156,13 @@ class Telemetry(object):
             elif len(data_list) == 10:
                 self.cansat.identifier = "GLIDER"
                 # TODO: telemetry packet cnt index
-                if int(data_list[2]) != self.cansat.packet_cnt_glider + 1:
+                if int(data_list[2]) + self.cansat.glider_packet_cnt_store \
+                < self.cansat.packet_cnt_glider + 1:
                     self.cansat.glider_packet_cnt_store = self.cansat.packet_cnt_glider
-                    self.cansat.missed_packet_glider = True
-                self.cansat.packet_cnt_glider = self.cansat.packet_cnt_glider + self.cansat.glider_packet_cnt_store
+                    print "packet count mismatch"
+                elif int(data_list[2]) > self.cansat.packet_cnt_glider + 1:
+                    print "missed packet"
+                self.cansat.packet_cnt_glider = int(data_list[2]) + self.cansat.glider_packet_cnt_store
                 # self.cansat.packet_cnt_glider += 1
                 for i in range(0,10):
                     if (data_list[i] == ""):
