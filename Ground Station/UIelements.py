@@ -563,14 +563,11 @@ class ForceFrame(Tk.Frame):
             print "Force Status:", self.force_status.get()
             if self.force_status_var == 1 or self.force_status_var == 2:
                 print 'sending force command...'
-                print self.force_status_var
                 try:
                     msg = ("f %d\n" % self.force_status_var).encode('utf-8')
                     # self.tel.ser.write(msg.encode())
                     self.tel.ser.write(msg)
-                    print "sent..."
-                    print getattr(self.tel.ser, "write_timeout")
-                    print msg
+                    print "sent..." + msg
                 except Exception as e:
                     print "Error: Could not write to serial"
                     # ????

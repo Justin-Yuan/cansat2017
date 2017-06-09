@@ -13,12 +13,15 @@ def update_mission_time(text_var, root):
 	root.after(1000, update_mission_time, text_var, root)
 
 def update_telemetry_time(text_var, root, cansat):
+	print cansat.telemetry_time
 	text_var.telemetry_time.set("Telemetry Time: %d" % cansat.telemetry_time)
 	cansat.bg_time += 1
-	if cansat.telemetry_time > 1 and time_stamp['bg_container_start'] == 0:
+	# record starting time for container telemetry & background time at the moment
+	if time_stamp['bg_container_start'] == 0 and cansat.telemetry_time > 1:
 		time_stamp['bg_container_start'] = cansat.bg_time
-		time_stamp['tel_container_start'] = consat.telemetry_time
-	if (not cansat.switch) and time_stamp['bg_glider_start'] == 0:
+		time_stamp['tel_container_start'] = cansat.telemetry_time
+	# record time when the glider telemetry is re-established
+	if time_stamp['bg_glider_start'] == 0 and (not cansat.switch):
 		time_stamp['bg_glider_start'] = cansat.bg_time
 		cansat.telemetry_time = time_stamp['bg_glider_start'] - time_stamp['bg_container_start'] + time_stamp['tel_container_start']
 		cansat.start_time = cansat.telemetry_time

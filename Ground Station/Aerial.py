@@ -96,6 +96,7 @@ class Telemetry(object):
             gps_speed = randint(30,40) #9
             com_cnt = randint(0,3) #10
             state = randint(1,7) #11
+            tel_time = randint(1, 20)
             angle = randint(-180,180) #12
             x = randint(0, 10)
             y = randint(0, 10)
@@ -112,6 +113,7 @@ class Telemetry(object):
             self.cansat.flight_status = state
             self.cansat.pos_x.append(x)
             self.cansat.pos_y.append(y)
+            self.cansat.telemetry_time = tel_time
 
         # TO-DO: verify the data_list fields
         elif self.ser_connected:
@@ -130,14 +132,7 @@ class Telemetry(object):
             if len(data_list) == 8:
                 self.cansat.identifier = "CONTAINER"
                 #listbox.insert(0, ["TEST ",data_list])
-                # TODO: telemetry packet cnt
-                if int(data_list[3]) + self.cansat.packet_cnt_store < self.cansat.packet_cnt + 1:
-                    self.cansat.packet_cnt_store = self.cansat.packet_cnt
-                    print "packet count mismatch"
-                elif int(data_list[3]) > self.cansat.packet_cnt + 1:
-                    print "missed packet"
-                self.cansat.packet_cnt = int(data_list[3]) + self.cansat.packet_cnt_store
-                # self.cansat.packet_cnt += 1
+
                 for i in range(0,8):
                     if (data_list[i] == ""):
                         data_list[i] = str(000)
@@ -146,6 +141,15 @@ class Telemetry(object):
                         float(data_list[i])
                     except:
                         data_list[i] = str(000)
+
+                # TODO: telemetry packet cnt
+                if int(data_list[3]) + self.cansat.packet_cnt_store < self.cansat.packet_cnt + 1:
+                    self.cansat.packet_cnt_store = self.cansat.packet_cnt
+                    print "packet count mismatch"
+                elif int(data_list[3]) > self.cansat.packet_cnt + 1:
+                    print "missed packet"
+                self.cansat.packet_cnt = int(data_list[3]) + self.cansat.packet_cnt_store
+                # self.cansat.packet_cnt += 1
 
                 self.cansat.pitot.append(0.0)
                 self.cansat.altitude.append(float(data_list[4]))
@@ -159,6 +163,16 @@ class Telemetry(object):
                 self.cansat.pos_y.append(0.0)
             elif len(data_list) == 10:
                 self.cansat.identifier = "GLIDER"
+
+                for i in range(0,10):
+                    if (data_list[i] == ""):
+                        data_list[i] = str(000)
+
+                    try:
+                        float(data_list[i])
+                    except:
+                        data_list[i] = str(000)
+
                 # TODO: telemetry packet cnt index
                 if int(data_list[2]) + self.cansat.packet_cnt_glider_store \
                 < self.cansat.packet_cnt_glider + 1:
@@ -168,14 +182,6 @@ class Telemetry(object):
                     print "missed packet"
                 self.cansat.packet_cnt_glider = int(data_list[2]) + self.cansat.packet_cnt_glider_store
                 # self.cansat.packet_cnt_glider += 1
-                for i in range(0,10):
-                    if (data_list[i] == ""):
-                        data_list[i] = str(000)
-
-                    try:
-                        float(data_list[i])
-                    except:
-                        data_list[i] = str(000)
 
                 self.cansat.pitot.append(float(data_list[5]))
                 self.cansat.altitude.append(float(data_list[3]))
