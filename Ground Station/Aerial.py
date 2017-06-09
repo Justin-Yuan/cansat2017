@@ -68,13 +68,13 @@ class Telemetry(object):
         self.ser_connected = False
         self.cansat = cansat
         # for testing wihtout serial only
-        self.csv_test = True
+        self.csv_test = False
         self.switch = True
         self.file_name = file_name
         # self.telemetry_box = telemetry_box
 
     def find_position_change(self, time, speed, degree):
-        speed_2d = math.sqrt(math.pow(speed, 2.0) - math.pow(9.81*(time-self.cansat.start_time), 2.0))
+        speed_2d = math.sqrt(abs(math.pow(speed, 2.0) - math.pow(9.81*(time-self.cansat.start_time), 2.0)))
         return speed_2d*math.cos(degree/180*math.pi), speed_2d*math.sin(degree/180*math.pi)
 
     def serial_update_write(self, root, telemetry_box):
@@ -129,10 +129,11 @@ class Telemetry(object):
                 self.cansat.identifier = "CONTAINER"
                 #listbox.insert(0, ["TEST ",data_list])
                 # TODO: telemetry packet cnt
-                if int(data_list[index]) != self.cansat.packet_cnt + 1:
-                    self.cansat.packet_cnt_store = self.cansat.packet_cnt
-                    self.cansat.missed_packet = True
-                self.cansat.packet_cnt = int(data_list[index]) + self.cansat.packet_cnt_store
+                # if int(data_list[index]) != self.cansat.packet_cnt + 1:
+                #     self.cansat.packet_cnt_store = self.cansat.packet_cnt
+                #     self.cansat.missed_packet = True
+                # self.cansat.packet_cnt = int(data_list[index]) + self.cansat.packet_cnt_store
+                self.cansat.packet_cnt += 1
                 for i in range(0,8):
                     if (data_list[i] == ""):
                         data_list[i] = str(000)
@@ -147,7 +148,7 @@ class Telemetry(object):
                 self.cansat.temp_outside.append(float(data_list[5]))
                 self.cansat.voltage.append(float(data_list[6]))
                 self.cansat.pressure.append(0.0)
-                self.cansat.heading.append(0.0) 
+                self.cansat.heading.append(0.0)
                 self.cansat.telemetry_time = int(data_list[2])
                 self.cansat.flight_status = int(data_list[7][0])
                 self.cansat.pos_x.append(0.0)
@@ -155,10 +156,11 @@ class Telemetry(object):
             elif len(data_list) == 10:
                 self.cansat.identifier = "GLIDER"
                 # TODO: telemetry packet cnt index
-                if int(data_list[index]) != self.cansat.packet_cnt_glider + 1:
-                    self.cansat.glider_packet_cnt_store = self.cansat.packet_cnt_glider
-                    self.cansat.missed_packet_glider = True
-                self.cansat.packet_cnt_glider = self.cansat.packet_cnt_glider + self.cansat.glider_packet_cnt_store 
+                # if int(data_list[index]) != self.cansat.packet_cnt_glider + 1:
+                #     self.cansat.glider_packet_cnt_store = self.cansat.packet_cnt_glider
+                #     self.cansat.missed_packet_glider = True
+                # self.cansat.packet_cnt_glider = self.cansat.packet_cnt_glider + self.cansat.glider_packet_cnt_store
+                self.cansat.packet_cnt_glider += 1
                 for i in range(0,10):
                     if (data_list[i] == ""):
                         data_list[i] = str(000)
@@ -184,7 +186,7 @@ class Telemetry(object):
                     self.cansat.pos_y.append(0.0)
                 else:
                     self.cansat.telemetry_time += 1
-                    (self.cansat.x_change, self.cansat.y_change) = self.find_position_change(self.cansat.telemetry_time[-1],
+                    (self.cansat.x_change, self.cansat.y_change) = self.find_position_change(self.cansat.telemetry_time,
                                                                         self.cansat.pitot[-1], self.cansat.heading[-1])
                     self.cansat.new_x += self.cansat.x_change
                     self.cansat.new_y += self.cansat.y_change

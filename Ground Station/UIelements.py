@@ -21,7 +21,7 @@ class MainGUI(Tk.Tk):
     def __init__(self,parent, cansat, tel):
         Tk.Tk.__init__(self,parent)
         self.parent = parent
-        self.geometry("1200x800+100+50")
+        self.geometry("1200x900+100+50")
         self.config(menu=MenuBar(self, cansat, tel))
 
 
