@@ -18,7 +18,7 @@ def update_telemetry_time(text_var, root, cansat):
 	if cansat.telemetry_time > 1 and time_stamp['bg_container_start'] == 0:
 		time_stamp['bg_container_start'] = cansat.bg_time
 		time_stamp['tel_container_start'] = consat.telemetry_time
-	if !cansat.switch and time_stamp['bg_glider_start'] == 0:
+	if (not cansat.switch) and time_stamp['bg_glider_start'] == 0:
 		time_stamp['bg_glider_start'] = cansat.bg_time
 		cansat.telemetry_time = time_stamp['bg_glider_start'] - time_stamp['bg_container_start'] + time_stamp['tel_container_start']
 		cansat.start_time = cansat.telemetry_time
