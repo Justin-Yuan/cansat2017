@@ -22,7 +22,8 @@ class MainGUI(Tk.Tk):
         Tk.Tk.__init__(self,parent)
         self.parent = parent
         self.geometry("1200x900+100+50")
-        self.config(menu=MenuBar(self, cansat, tel))
+        self.menu = MenuBar(self, cansat, tel)
+        self.config(menu=self.menu)
 
 
 class MenuBar(Tk.Menu):
@@ -58,7 +59,7 @@ class MenuBar(Tk.Menu):
                 print(usb_port)
                 port_menu.add_command(label=port, command=lambda usb_port=usb_port: self.open_ser(usb_port, self.tel))
 
-        port_menu.add_command(label="Disconnect", command=self.disconnect)
+        port_menu.add_command(label="Disconnect", command=lambda usb_port=usb_port: self.disconnect(usb_port, self.tel))
 
         if not found_port:
             port_menu.add_command(label="No COM Device Found")
@@ -101,11 +102,14 @@ class MenuBar(Tk.Menu):
             print(e)
             # root.status.set("Error: connection cannot be established. %s" % e)
 
+    def set_text_var(self, text_var):
+        self.text_var = text_var
+
     def disconnect(self, usb_port, tel):
         tel.ser.close()
         tel.ser_connected = False
         print("Ended connection")
-        flight_status.set("Flight Status: Standby")
+        self.text_var.flight_status.set("Flight Status: Standby")
 
 
 class StatusBar(Tk.Frame):

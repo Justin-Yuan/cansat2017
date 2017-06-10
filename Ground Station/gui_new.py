@@ -22,7 +22,7 @@ except:
 # team information
 TEAM_NUM = 6159
 baud_rate = 9600
-file_name = "CANSAT2017_TLM_6159_RSX_Cansat.csv"
+file_name = "data_log/CANSAT2017_TLM_6159_RSX_Cansat_" + str(datetime.datetime.now())[0: 19] + ".csv"
 
 # Vars
 force_status_var = 0
@@ -50,9 +50,12 @@ if __name__ == "__main__":
     # initialize the main gui
     root = MainGUI(None, cansat, tel)
     root.title('CANSAT - 2017    Team: ' + str(TEAM_NUM))
+    # print hasattr(root, 'menu')
+    # print root.menu
 
     # Text Variables
     text_var = TextVar(root, cansat)
+    root.menu.set_text_var(text_var)
 
     # initialize UI elements
     panel = Panel(root, cansat)

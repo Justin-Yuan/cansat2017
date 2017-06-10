@@ -134,7 +134,7 @@ class Telemetry(object):
                 #listbox.insert(0, ["TEST ",data_list])
 
                 for i in range(0,8):
-                    if (data_list[i] == ""):
+                    if (data_list[i] == "" or data_list[i][0] == '-'):
                         data_list[i] = str(000)
 
                     try:
@@ -212,11 +212,11 @@ class Telemetry(object):
 
     def write_to_csv(self, root): # writes in parallel with the serial update
         with open(self.file_name, 'aw+') as csvfile:
-            header = ["6159","OBJECT","MISSION_TIME","PACKET_CNT","ALTITUDE",
+            header = ["TEAM_ID","OBJECT","MISSION_TIME","PACKET_CNT","ALTITUDE",
             "PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
             writer = csv.DictWriter(csvfile, fieldnames=header)
             # writer.writeheader()
-            writer.writerow({"6159":6159,
+            writer.writerow({"TEAM_ID":6159,
                             "OBJECT": self.cansat.identifier,
                             "MISSION_TIME":self.cansat.telemetry_time, #self.cansat.mission_time,
                             "PACKET_CNT": self.cansat.packet_cnt + self.cansat.packet_cnt_glider,
