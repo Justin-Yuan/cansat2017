@@ -3,6 +3,10 @@ import math
 import datetime
 import helpers
 import csv
+
+
+header = ["TEAM_ID","OBJECT","MISSION_TIME","PACKET_CNT","ALTITUDE",
+          "PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
 class Cansat(object):
     """ Cansat class to encapsulate shared variables and functions
     """
@@ -10,7 +14,7 @@ class Cansat(object):
         self.packet_cnt = 0
         self.packet_cnt_glider = 0
         self.altitude = [0.0]
-        self.mission_time = str(datetime.datetime.now())[14:19]
+        # self.mission_time = str(datetime.datetime.now())[14:19]
         self.telemetry_time = 0
         self.bg_time = 0    # background time
         self.pressure = [0.0] # glider only
@@ -91,7 +95,7 @@ class Telemetry(object):
             gps_speed = randint(30,40) #9
             com_cnt = randint(0,3) #10
             state = randint(1,7) #11
-            tel_time = randint(1, 20)
+            # tel_time = randint(0,20)
             angle = randint(-180,180) #12
             x = randint(0, 10)
             y = randint(0, 10)
@@ -108,7 +112,7 @@ class Telemetry(object):
             self.cansat.flight_status = state
             self.cansat.pos_x.append(x)
             self.cansat.pos_y.append(y)
-            self.cansat.telemetry_time = tel_time
+            self.cansat.telemetry_time += 1
 
         # TO-DO: verify the data_list fields
         elif self.ser_connected:
@@ -206,9 +210,7 @@ class Telemetry(object):
         root.after(1000, self.serial_update_write, root, telemetry_box)
 
     def write_to_csv(self, root): # writes in parallel with the serial update
-        with open(self.file_name, 'aw+') as csvfile:
-            header = ["TEAM_ID","OBJECT","MISSION_TIME","PACKET_CNT","ALTITUDE",
-            "PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
+        with open(self.file_name, 'aw') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=header)
             # writer.writeheader()
             writer.writerow({"TEAM_ID":6159,

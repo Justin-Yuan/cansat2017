@@ -1,10 +1,10 @@
 #import Tkinter
 from serial import *
 import ttk, user, sys, time, datetime, thread
-from subprocess import check_output
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from matplotlib.figure import Figure
+# from subprocess import check_output
+# import matplotlib.pyplot as plt
+# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+# from matplotlib.figure import Figure
 
 from helpers import *
 from Aerial import *
@@ -89,10 +89,10 @@ if __name__ == "__main__":
     root.after(0, chart.plot_heading)
     root.after(0, chart.plot_position)
 
-    root.after(0, update_mission_time, text_var, root)
-    root.after(0, update_telemetry_time, text_var, root, cansat)
-    root.after(0, update_flight_status, tel, text_var, root, cansat)
-    root.after(0, panel.update_panel, root, cansat, text_var)
+    root.after(1000, update_mission_time, text_var, root)
+    root.after(1000, update_telemetry_time, text_var, root, cansat)
+    root.after(1000, update_flight_status, tel, text_var, root, cansat)
+    root.after(1000, panel.update_panel, root, cansat, text_var)
     root.after(1000, tel.serial_update_write, root, telemetry_box)
     root.after(1000, tel.write_to_csv, root)
     root.after(1000, conclude, chart)

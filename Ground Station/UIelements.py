@@ -149,7 +149,7 @@ class Chart(object):
 
     def pack_frame(self):
         self.frame.pack(side='top', expand = 1, fill='x')
-        self.frame.bind("<Key>", self.key)
+        # self.frame.bind("<Key>", self.key)
         self.frame.focus_set()
 
         self.chart1_frame.pack(side = "left", expand = 1, fill = 'both')
@@ -158,15 +158,15 @@ class Chart(object):
         self.chart4_frame.pack(side = "left", expand = 1, fill = 'both')
 
         self.frame2.pack(expand = 1, fill='x')
-        self.frame.bind("<Key>", self.key)
+        # self.frame.bind("<Key>", self.key)
 
         self.chart5_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart6_frame.pack(side = "left", expand = 1, fill = 'both')
         self.chart7_frame.pack(side = "left", expand = 1, fill = 'both')
 
 
-    def key(self, event):
-        return
+    # def key(self, event):
+    #     return
 #    root.status.set(repr(event.char))
     def plot_altitude(self):
         global fig_altitude, dataPlot_altitude, a_altitude
@@ -334,12 +334,11 @@ class Chart(object):
 
         def plot_cts():
             global a_heading
-            target = self.cansat
-            x_axis1 = range(0, len(target.heading))
+            x_axis1 = range(0, len(self.cansat.heading))
             # x_axis2 = range(0, len(target.gps_speed))
 
             a_heading.clear()
-            a_heading.plot(x_axis1, target.heading, "r", label = "Heading")
+            a_heading.plot(x_axis1, self.cansat.heading, "r", label = "Heading")
             # a_pitot.plot(x_axis2, target.gps_speed, "b", label = "GPS")
 
             a_heading.set_title("Heading (degree)")
@@ -366,7 +365,7 @@ class Chart(object):
         dataPlot_position.get_tk_widget().pack()
 
         def plot_cts():
-            global a_position
+            # global a_position
             # x_axis = range(0, len(self.cansat.pos_x))
 
             a_position.clear()
@@ -554,7 +553,7 @@ class ForceFrame(Tk.Frame):
 
 # TODO status and force_status variables
     def force_status_callback(self, status):
-        print status
+        # print status
         if status == 1:
             self.force_status.set("Deploy Selected")
             self.force_status_var = 1
