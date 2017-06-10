@@ -342,7 +342,7 @@ class Chart(object):
             # a_pitot.plot(x_axis2, target.gps_speed, "b", label = "GPS")
 
             a_heading.set_title("Heading (degree)")
-            a_heading.set_ylim([-10, 100])
+            a_heading.set_ylim([-15, 375])
             # legend = a_heading.legend(loc='upper left', shadow=True)
 
             dataPlot_heading.show()
