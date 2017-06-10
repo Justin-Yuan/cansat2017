@@ -80,7 +80,7 @@ class Telemetry(object):
         return speed_2d*math.cos(degree/180*math.pi), speed_2d*math.sin(degree/180*math.pi)
 
     def serial_update_write(self, root, telemetry_box):
-        print self.ser_connected
+        print "connection: " + str(self.ser_connected)
 
         # for testing plots without serial connection only, delete this later
         if self.csv_test:
@@ -165,7 +165,7 @@ class Telemetry(object):
                 self.cansat.identifier = "GLIDER"
 
                 for i in range(0,10):
-                    if (data_list[i] == ""):
+                    if (data_list[i] == "" or data_list[i][0] == '-'):
                         data_list[i] = str(000)
 
                     try:

@@ -13,9 +13,10 @@ def update_mission_time(text_var, root):
 	root.after(1000, update_mission_time, text_var, root)
 
 def update_telemetry_time(text_var, root, cansat):
-	print cansat.telemetry_time
+	# print "telemetry time: " + str(cansat.telemetry_time)
 	text_var.telemetry_time.set("Telemetry Time: %d" % cansat.telemetry_time)
 	cansat.bg_time += 1
+	text_var.bg_time.set("Background Time: %d" % cansat.bg_time)
 	# record starting time for container telemetry & background time at the moment
 	if time_stamp['bg_container_start'] == 0 and cansat.telemetry_time > 1:
 		time_stamp['bg_container_start'] = cansat.bg_time

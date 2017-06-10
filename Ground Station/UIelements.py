@@ -21,7 +21,7 @@ class MainGUI(Tk.Tk):
     def __init__(self,parent, cansat, tel):
         Tk.Tk.__init__(self,parent)
         self.parent = parent
-        self.geometry("1200x900+100+50")
+        self.geometry("1300x900+100+50")
         self.menu = MenuBar(self, cansat, tel)
         self.config(menu=self.menu)
 
@@ -59,7 +59,7 @@ class MenuBar(Tk.Menu):
                 print(usb_port)
                 port_menu.add_command(label=port, command=lambda usb_port=usb_port: self.open_ser(usb_port, self.tel))
 
-        port_menu.add_command(label="Disconnect", command=lambda usb_port=usb_port: self.disconnect(usb_port, self.tel))
+                port_menu.add_command(label="Disconnect", command=lambda usb_port=usb_port: self.disconnect(usb_port, self.tel))
 
         if not found_port:
             port_menu.add_command(label="No COM Device Found")
@@ -191,7 +191,7 @@ class Chart(object):
 
 
             a_altitude.set_title("Altitude (m)")
-            legend = a_altitude.legend(loc='upper left', shadow=True)
+            # legend = a_altitude.legend(loc='upper left', shadow=True)
 
             dataPlot_altitude.show()
             dataPlot_altitude.get_tk_widget().pack()
@@ -313,7 +313,7 @@ class Chart(object):
 
             a_pitot.set_title("Speed (m/s)")
             a_pitot.set_ylim([-10, 100])
-            legend = a_pitot.legend(loc='upper left', shadow=True)
+            # legend = a_pitot.legend(loc='upper left', shadow=True)
 
             dataPlot_pitot.show()
             dataPlot_pitot.get_tk_widget().pack()
@@ -344,7 +344,7 @@ class Chart(object):
 
             a_heading.set_title("Heading (degree)")
             a_heading.set_ylim([-10, 100])
-            legend = a_heading.legend(loc='upper left', shadow=True)
+            # legend = a_heading.legend(loc='upper left', shadow=True)
 
             dataPlot_heading.show()
             dataPlot_heading.get_tk_widget().pack()
@@ -408,6 +408,7 @@ class TextVar(object):
     def __init__(self, root, cansat):
         self.mission_time = Tk.StringVar()
         self.telemetry_time = Tk.StringVar()
+        self.bg_time = Tk.StringVar()
 
         self.force_status = Tk.StringVar()
         self.flight_status = Tk.StringVar()
@@ -491,6 +492,7 @@ class LeftInfoFrame(Tk.Frame):
 
         self.label_info9 = Tk.Label(self.info_frame, textvariable = text_var.pos_x_var)
         self.label_info10 = Tk.Label(self.info_frame, textvariable = text_var.pos_y_var)
+        self.label_info11 = Tk.Label(self.info_frame, textvariable= text_var.bg_time)
 
         # self.label_info1 = Tk.Label(self.info_frame, textvariable = text_var.gps_lat)
         # self.label_info2 = Tk.Label(self.info_frame, textvariable = text_var.gps_long)
@@ -512,6 +514,8 @@ class LeftInfoFrame(Tk.Frame):
 
         self.label_info9.grid(column = 0, row = 9, sticky = 'w')
         self.label_info10.grid(column = 0, row = 10, sticky = 'w')
+
+        self.label_info11.grid(column = 0, row = 12, sticky='w')
 
         # self.label_info1.grid(column = 0, row = 2,sticky = 'w')
         # self.label_info2.grid(column = 0, row = 3,sticky = 'w')

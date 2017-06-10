@@ -37,7 +37,7 @@ flight_status_dict = {1:'Waiting', 2:'Ascending', 3:'Descending', 4:'Deploying',
 if __name__ == "__main__":
     # wirte header to log file
     f = open(file_name, 'w')
-    f.write("6159,OBJECT,MISSION_TIME,PACKET_CNT,ALTITUDE,PRESSURE,SPEED,TEMP,VOLTAGE,HEADING,SOFTWARE_STATE\n")
+    f.write("TEAM_ID,OBJECT,MISSION_TIME,PACKET_CNT,ALTITUDE,PRESSURE,SPEED,TEMP,VOLTAGE,HEADING,SOFTWARE_STATE\n")
     f.close()
     # old: initialize Cansat objects
     # container = Container()
