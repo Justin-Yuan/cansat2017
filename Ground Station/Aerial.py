@@ -58,8 +58,6 @@ class Cansat(object):
 #         Cansat.__init__(self)
 #         self.identifier = "GLIDER"
 
-
-
 class Telemetry(object):
     """
     """
@@ -71,9 +69,6 @@ class Telemetry(object):
         self.csv_test = False
         # self.switch = True
         self.file_name = file_name
-
-
-        # self.telemetry_box = telemetry_box
 
     def find_position_change(self, time, speed, degree):
         speed_2d = math.sqrt(abs(math.pow(speed, 2.0) - math.pow(9.81*(time-self.cansat.start_time), 2.0)))

@@ -38,8 +38,7 @@ def update_flight_status(tel, text_var, root, cansat):
 		text_var.flight_status.set("Flight Status: Unknown")
 
 	# print tel.ser_connected
-
-	root.after(500, update_flight_status, tel, text_var, root, cansat)
+	root.after(1000, update_flight_status, tel, text_var, root, cansat)
 
 def conclude(chart):
     chart.frame.focus_set()
