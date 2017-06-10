@@ -4,6 +4,8 @@ import datetime
 import helpers
 import csv
 
+# performance testing
+import time
 
 header = ["TEAM_ID","OBJECT","MISSION_TIME","PACKET_CNT","ALTITUDE",
           "PRESSURE","SPEED","TEMP","VOLTAGE","HEADING","SOFTWARE_STATE"]
@@ -70,7 +72,7 @@ class Telemetry(object):
         self.ser_connected = False
         self.cansat = cansat
         # for testing wihtout serial only
-        self.csv_test = False
+        self.csv_test = True
         # self.switch = True
         self.file_name = file_name
 
@@ -211,6 +213,8 @@ class Telemetry(object):
 
     def write_to_csv(self, root): # writes in parallel with the serial update
         with open(self.file_name, 'aw') as csvfile:
+            start = time.time()
+            print 'start write_to_csv timer'
             writer = csv.DictWriter(csvfile, fieldnames=header)
             # writer.writeheader()
             writer.writerow({"TEAM_ID":6159,
@@ -224,4 +228,6 @@ class Telemetry(object):
                             "VOLTAGE": self.cansat.voltage[-1],
                             "HEADING": self.cansat.heading[-1],
                             "SOFTWARE_STATE": self.cansat.flight_status})
+            end = time.time()
+            print('write_to_csv time:', end - start)
         root.after(1000, self.write_to_csv, root)

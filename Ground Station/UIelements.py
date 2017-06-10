@@ -7,6 +7,9 @@ from tkFileDialog import asksaveasfile
 import csv
 import datetime
 
+# for performance testing purpose
+import time
+
 from helpers import *
 try:
     # for Python2
@@ -179,7 +182,7 @@ class Chart(object):
         dataPlot_altitude.get_tk_widget().pack()
 
         def plot_cts():
-            global a_altitude
+            # global a_altitude
             x_axis1 = range(0, len(self.cansat.altitude))
             # x_axis2 = range(0, len(self.cansat.gps_alt))
 
@@ -194,7 +197,7 @@ class Chart(object):
             # legend = a_altitude.legend(loc='upper left', shadow=True)
 
             dataPlot_altitude.show()
-            dataPlot_altitude.get_tk_widget().pack()
+            # dataPlot_altitude.get_tk_widget().pack()
 
             self.chart1_frame.after(1000, plot_cts)
 
@@ -211,7 +214,9 @@ class Chart(object):
         dataPlot_pressure.get_tk_widget().pack()
 
         def plot_cts():
-            global a_pressure
+            # global a_pressure
+            start = time.time()
+            print('start plot_cts timer')
             x_axis1 = range(0, len(self.cansat.pressure))
             # x_axis2 = range(0, len(self.cansat.gps_alt))
 
@@ -224,8 +229,9 @@ class Chart(object):
             a_pressure.set_title("Pressure (kPa)")
 
             dataPlot_pressure.show()
-            dataPlot_pressure.get_tk_widget().pack()
-
+            # dataPlot_pressure.get_tk_widget().pack()
+            end = time.time()
+            print('plot_cts time:', end - start)
             self.chart3_frame.after(1000, plot_cts)
 
         plot_cts()
@@ -243,7 +249,7 @@ class Chart(object):
         dataPlot_temp.get_tk_widget().pack()
 
         def plot_cts():
-            global a_temp
+            # global a_temp
             x_axis = range(0, len(self.cansat.temp_outside))
 
             a_temp.clear()
@@ -253,7 +259,7 @@ class Chart(object):
             a_temp.set_ylim([0, 60])
 
             dataPlot_temp.show()
-            dataPlot_temp.get_tk_widget().pack()
+            # dataPlot_temp.get_tk_widget().pack()
 
             self.chart2_frame.after(1000, plot_cts)
 
@@ -270,7 +276,7 @@ class Chart(object):
         dataPlot_voltage.get_tk_widget().pack()
 
         def plot_cts():
-            global a_voltage
+            # global a_voltage
             a_voltage.clear()
             voltage = self.cansat.voltage[len(self.cansat.voltage) - 1]
             if voltage > 7.3:
@@ -285,7 +291,7 @@ class Chart(object):
             a_voltage.get_xaxis().set_visible(False)
 
             dataPlot_voltage.show()
-            dataPlot_voltage.get_tk_widget().pack()
+            # dataPlot_voltage.get_tk_widget().pack()
 
             self.chart4_frame.after(1000, plot_cts)
 
@@ -302,13 +308,12 @@ class Chart(object):
         dataPlot_pitot.get_tk_widget().pack()
 
         def plot_cts():
-            global a_pitot
-            target = self.cansat
-            x_axis1 = range(0, len(target.pitot))
+            # global a_pitot
+            x_axis1 = range(0, len(self.cansat.pitot))
             # x_axis2 = range(0, len(target.gps_speed))
 
             a_pitot.clear()
-            a_pitot.plot(x_axis1, target.pitot, "r", label = "Pitot")
+            a_pitot.plot(x_axis1, self.cansat.pitot, "r", label = "Pitot")
             # a_pitot.plot(x_axis2, target.gps_speed, "b", label = "GPS")
 
             a_pitot.set_title("Speed (m/s)")
@@ -316,7 +321,7 @@ class Chart(object):
             # legend = a_pitot.legend(loc='upper left', shadow=True)
 
             dataPlot_pitot.show()
-            dataPlot_pitot.get_tk_widget().pack()
+            # dataPlot_pitot.get_tk_widget().pack()
 
             self.chart5_frame.after(1000, plot_cts)
 
