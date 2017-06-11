@@ -1,0 +1,8 @@
+install tkinter and matlab plot from the following commands:
+
+sudo apt-get install tk tk-dev
+pip install matplotlib
+
+
+run the ground station by using:
+sudo python gs_gui.py

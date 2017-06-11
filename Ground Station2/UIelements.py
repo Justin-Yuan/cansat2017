@@ -110,6 +110,7 @@ class MenuBar(Tk.Menu):
         tel.ser_connected = False
         print("Ended connection")
         self.text_var.flight_status.set("Flight Status: Standby")
+        # tel.f.close()
 
 
 class StatusBar(Tk.Frame):
